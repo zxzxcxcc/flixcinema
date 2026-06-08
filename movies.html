@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlixCinema | Movies Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Urbanist:wght@700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Urbanist', 'sans-serif'] }, colors: { dark: '#08090b', card: '#0c0d10', border: '#1a1c23', accent: '#3b82f6' } } } }
+    </script>
+    <style>
+        body { background-color: #08090b; color: #f8fafc; overflow-x: hidden; }
+        .glass-nav { background: rgba(8, 9, 11, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid #1a1c23; }
+        .movie-card:hover { transform: translateY(-8px); border-color: #3b82f6; }
+        .movie-card img { transition: transform 0.5s ease; }
+        .movie-card:hover img { transform: scale(1.08); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="pb-20">
+    <nav class="glass-nav fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center h-20">
+            <div class="flex items-center gap-2">
+                <div class="w-9 h-9 bg-accent rounded-lg flex items-center justify-center shadow-lg shadow-blue-900/40">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"/></svg>
+                </div>
+                <h1 class="text-2xl font-display font-extrabold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">FlixCinema</h1>
+            </div>
+            
+            <div class="relative group">
+                <button class="flex items-center gap-2 text-gray-300 hover:text-white font-bold uppercase tracking-widest text-sm focus:outline-none py-4">
+                    Menu <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="absolute right-0 top-full w-48 bg-card border border-border rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right scale-95 group-hover:scale-100">
+                    <div class="p-2 flex flex-col gap-1">
+                        <a href="index.html" class="px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition font-medium">Home</a>
+                        <a href="movies.html" class="px-4 py-2 text-accent bg-accent/10 rounded-lg font-bold">Movies</a>
+                        <a href="series.html" class="px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition font-medium">Series</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mt-32 px-6 max-w-4xl mx-auto text-center">
+        <h2 class="text-4xl md:text-5xl font-display font-extrabold mb-6">Movie <span class="text-accent">Collection</span></h2>
+        <div class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+            <div class="relative flex items-center">
+                <input type="search" id="q" onkeyup="search()" placeholder="Search movies..." class="w-full bg-card border border-border rounded-2xl py-5 px-14 text-lg focus:outline-none focus:ring-2 focus:ring-accent transition shadow-2xl">
+                <svg class="absolute left-5 w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 mt-16">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6" id="grid">
+            <div class="col-span-full text-center text-gray-500 py-10" id="loading">Loading movies...</div>
+        </div>
+    </div>
+
+    <script>
+    const API_URL = "https://toolsmax.site/api.php";
+    const fallback_img = "https://i.quotev.com/b2gtjqawaaaa.jpg";
+
+    fetch(`${API_URL}?action=get_all`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('loading').style.display = 'none';
+            let html = '';
+            
+            data.movies.forEach(m => {
+                html += `
+                <div class="item movie-card bg-card border border-border rounded-2xl overflow-hidden transition-all duration-300 relative group" data-title="${m.title.toLowerCase()}">
+                    <div class="absolute top-3 left-3 z-10 bg-accent/80 backdrop-blur px-2 py-1 rounded text-[10px] font-black uppercase tracking-tighter">Movie</div>
+                    <div class="aspect-[2/3] overflow-hidden bg-gray-900">
+                        <img src="${m.logo || fallback_img}" class="w-full h-full object-cover" onerror="this.src='${fallback_img}'">
+                        <div class="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <button onclick="playMedia('${m.url}', '${m.title.replace(/'/g, "\\'")}')" class="bg-accent p-4 rounded-full shadow-[0_0_20px_rgba(59,130,246,0.5)] transform scale-50 group-hover:scale-100 transition duration-300">
+                                <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4"><h3 class="text-sm font-bold truncate text-white">${m.title}</h3></div>
+                </div>`;
+            });
+            document.getElementById('grid').innerHTML = html;
+        });
+
+    function playMedia(u, t) {
+        const isM = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if(isM) { window.location.href = `intent:${u}#Intent;type=video/*;end`; } 
+        else {
+            const blob = new Blob(["#EXTM3U\n#EXTINF:-1," + t + "\n" + u], {type: "audio/mpegurl"});
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = t + ".m3u";
+            a.click();
+        }
+    }
+
+    function search() {
+        let v = document.getElementById('q').value.toLowerCase();
+        document.querySelectorAll('.item').forEach(i => {
+            i.style.display = i.getAttribute('data-title').includes(v) ? 'block' : 'none';
+        });
+    }
+    </script>
+</body>
+</html>
