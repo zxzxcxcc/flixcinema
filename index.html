@@ -92,7 +92,6 @@
             globalSeriesData = data.series || {};
             let html = '';
             
-            // Movies aur Series ko arrays mein convert/store kar rahe hain
             let moviesArr = data.movies || [];
             let seriesArr = [];
             
@@ -101,8 +100,10 @@
                     seriesArr.push({ name: name, ...sData });
                 }
             }
+            
+            // Yahan humne series ko reverse kar diya hai (New to Old/Opposite)
+            seriesArr.reverse();
 
-            // Dono ko mix karne (interleave) ke liye logic
             let combined = [];
             let maxLength = Math.max(moviesArr.length, seriesArr.length);
             
@@ -111,7 +112,6 @@
                 if (seriesArr[i]) combined.push({ type: 'series', item: seriesArr[i] });
             }
 
-            // Ab mixed array ko render kar rahe hain
             if (combined.length > 0) {
                 combined.forEach(media => {
                     if (media.type === 'movie') {
@@ -177,11 +177,19 @@
         if(!d) return;
         document.getElementById('mTitle').innerText = name;
         let h = '';
-        for (const [s, eps] of Object.entries(d.seasons)) {
-            let sortedEps = eps.sort((a, b) => parseInt(a.episode) - parseInt(b.episode));
-            h += `<div class="bg-gray-900/50 p-6 rounded-2xl border border-border">
+        
+        // Sorting Seasons New to Old (Descending)
+        const sortedSeasonKeys = Object.keys(d.seasons).sort((a, b) => parseInt(b) - parseInt(a));
+
+        sortedSeasonKeys.forEach(s => {
+            const eps = d.seasons[s];
+            // Sorting Episodes New to Old (Descending)
+            let sortedEps = eps.sort((a, b) => parseInt(b.episode) - parseInt(a.episode));
+            
+            h += `<div class="bg-gray-900/50 p-6 rounded-2xl border border-border mb-6">
                     <h3 class="text-purple-500 font-black mb-4 uppercase tracking-widest text-sm">Season ${s}</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">`;
+            
             sortedEps.forEach(e => {
                 const safeTitle = e.title.replace(/'/g, "\\'");
                 h += `<button onclick="playMedia('${e.url}', '${safeTitle}')" class="flex items-center gap-3 p-3 bg-card border border-border rounded-xl hover:border-purple-500 transition group text-left shadow-sm">
@@ -190,7 +198,8 @@
                       </button>`;
             });
             h += `</div></div>`;
-        }
+        });
+        
         document.getElementById('mBody').innerHTML = h;
         document.getElementById('modal').classList.remove('hidden');
         setTimeout(() => document.getElementById('mContent').classList.replace('scale-90', 'scale-100'), 10);
