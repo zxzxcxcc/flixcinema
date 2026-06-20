@@ -52,7 +52,8 @@
         
         for (let i = 0; i < movies.length; i++) {
             const m = movies[i];
-            html += `<div class="movie-card rounded-lg overflow-hidden item" data-title="${(m.title||'').toLowerCase()}">
+            html += `<div class="movie-card rounded-lg overflow-hidden item relative" data-title="${(m.title||'').toLowerCase()}">
+                <span class="absolute top-2 left-2 bg-blue-600/90 text-white px-2 py-1 text-[9px] font-bold rounded tracking-wider z-10">MOVIE</span>
                 <img src="${m.logo || fallback}" class="w-full aspect-[2/3] object-cover">
                 <div class="p-3">
                     <h3 class="text-xs font-bold truncate mb-3">${m.title}</h3>
