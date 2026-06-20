@@ -3,145 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlixCinema | Series Collection</title>
-    <script src="https://cdn.tailwindcss.com?v=1.0"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Urbanist:wght@700;800&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Urbanist', 'sans-serif'] }, colors: { dark: '#08090b', card: '#0c0d10', border: '#1a1c23', accent: '#3b82f6' } } } }
-    </script>
+    <title>FlixCinema - Series</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #08090b; color: #f8fafc; overflow-x: hidden; }
-        .glass-nav { background: rgba(8, 9, 11, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid #1a1c23; }
-        .movie-card:hover { transform: translateY(-8px); border-color: #a855f7; }
-        .movie-card img { transition: transform 0.5s ease; }
-        .movie-card:hover img { transform: scale(1.08); }
+        body { background-color: #050505; color: #d1d5db; font-family: sans-serif; }
+        .glass { background: rgba(15, 15, 15, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid #222; }
+        .movie-card { background: #0a0a0a; border: 1px solid #222; transition: 0.3s; }
+        .movie-card:hover { border-color: #3b82f6; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="pb-20">
 
-    <nav class="glass-nav fixed w-full top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center h-20">
-            <div class="flex items-center gap-2">
-                <div class="w-9 h-9 bg-accent rounded-lg flex items-center justify-center shadow-lg shadow-blue-900/40">
-                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"/></svg>
-                </div>
-                <h1 class="text-2xl font-display font-extrabold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">FlixCinema</h1>
-            </div>
-            
+    <nav class="glass fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center h-16">
+            <h1 class="text-xl font-bold text-white tracking-wider">FLIX<span class="text-blue-500">CINEMA</span></h1>
             <div class="relative group">
-                <button class="flex items-center gap-2 text-gray-300 hover:text-white font-bold uppercase tracking-widest text-sm focus:outline-none py-4">
-                    Menu <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <div class="absolute right-0 top-full w-48 bg-card border border-border rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right scale-95 group-hover:scale-100">
-                    <div class="p-2 flex flex-col gap-1">
-                        <a href="index.html" class="px-4 py-2 text-accent bg-accent/10 rounded-lg font-bold">Home</a>
-                        <a href="movies.html" class="px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition font-medium">Movies</a>
-                        <a href="series.html" class="px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition font-medium">Series</a>
-                    </div>
+                <button class="text-sm uppercase font-bold text-gray-400">Menu ▾</button>
+                <div class="absolute right-0 top-full mt-2 w-32 bg-[#111] border border-[#222] rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                    <a href="https://zxzxcxcc.github.io/flixcinema/" class="block px-4 py-2 text-xs hover:bg-[#222]">Home</a>
+                    <a href="https://zxzxcxcc.github.io/flixcinema/movies.html" class="block px-4 py-2 text-xs hover:bg-[#222]">Movies</a>
+                    <a href="https://zxzxcxcc.github.io/flixcinema/series.html" class="block px-4 py-2 text-xs hover:bg-[#222]">Series</a>
                 </div>
             </div>
         </div>
     </nav>
 
-
-    <div class="mt-32 px-6 max-w-4xl mx-auto text-center">
-        <h2 class="text-4xl md:text-5xl font-display font-extrabold mb-6">Series <span class="text-purple-500">Collection</span></h2>
-        <input type="search" id="q" onkeyup="search()" placeholder="Search TV series..." class="w-full bg-card border border-border rounded-2xl py-5 px-14 text-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition shadow-2xl">
+    <div class="mt-28 px-6 max-w-7xl mx-auto">
+        <input type="search" id="q" onkeyup="search()" placeholder="Search series..." 
+        class="w-full bg-[#0a0a0a] border border-[#222] rounded-lg py-3 px-4 focus:outline-none focus:border-blue-500 text-sm">
     </div>
 
-    <div class="max-w-7xl mx-auto px-6 mt-16">
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6" id="grid">
-            <div class="col-span-full text-center text-gray-500 py-10" id="loading">Loading series...</div>
+    <div class="max-w-7xl mx-auto px-6 mt-8">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4" id="grid">
+            <div class="col-span-full text-center text-gray-600 py-10" id="loading">Loading series...</div>
         </div>
     </div>
 
-    <div id="modal" class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="bg-card w-full max-w-4xl max-h-[90vh] rounded-3xl border border-border overflow-hidden flex flex-col shadow-2xl scale-90 transition-transform duration-300" id="mContent">
-            <div class="p-6 border-b border-border flex justify-between items-center bg-[#11141b]">
-                <h2 id="mTitle" class="text-2xl font-display font-bold text-white">Series</h2>
-                <button onclick="closeModal()" class="w-10 h-10 bg-gray-800 hover:bg-red-600 text-gray-300 hover:text-white rounded-full flex items-center justify-center transition shadow-lg">&times;</button>
+    <div id="modal" class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-[#0a0a0a] w-full max-w-lg rounded-xl border border-[#222] shadow-2xl overflow-hidden">
+            <div class="p-4 border-b border-[#222] flex justify-between items-center">
+                <h2 id="mTitle" class="text-sm font-bold text-white">Episodes</h2>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-white">&times;</button>
             </div>
-            <div id="mBody" class="p-6 overflow-y-auto flex-1 space-y-8 no-scrollbar"></div>
+            <div id="mBody" class="p-4 max-h-[70vh] overflow-y-auto no-scrollbar space-y-2"></div>
         </div>
     </div>
 
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const API_URL = "https://toolsmax.site/flixphp/api.php";
-        const fallback_img = "https://i.quotev.com/b2gtjqawaaaa.jpg";
-        let globalSeriesData = {};
+    const API_URL = "https://toolsmax.site/flixphp/api.php";
+    const fallback = "https://i.quotev.com/b2gtjqawaaaa.jpg";
+    let globalSeriesData = {};
 
-        // Cache-busting ke liye t=${Date.now()} add kiya
-        fetch(`${API_URL}?action=get_all&t=${Date.now()}`, { cache: "no-cache" })
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('loading').style.display = 'none';
-                globalSeriesData = data.series || {};
-                let html = '';
-                const entries = Object.entries(globalSeriesData).reverse();
-
-                entries.forEach(([name, sData]) => {
-                    let seasonCount = Object.keys(sData.seasons || {}).length;
-                    html += `
-                    <div class="item movie-card bg-card border border-border rounded-2xl overflow-hidden transition-all duration-300 relative group cursor-pointer" onclick="openSeries('${name.replace(/'/g, "\\'")}')" data-title="${name.toLowerCase()}">
-                        <div class="absolute top-3 left-3 z-10 bg-purple-600/80 backdrop-blur px-2 py-1 rounded text-[10px] font-black uppercase tracking-tighter">Series</div>
-                        <div class="aspect-[2/3] overflow-hidden bg-gray-900">
-                            <img src="${sData.logo || fallback_img}" class="w-full h-full object-cover" onerror="this.src='${fallback_img}'">
-                        </div>
-                        <div class="p-4"><h3 class="text-sm font-bold truncate text-white">${name}</h3><p class="text-[10px] text-purple-400 mt-1 uppercase font-bold">${seasonCount} Seasons</p></div>
-                    </div>`;
-                });
-                document.getElementById('grid').innerHTML = html;
-            });
-
-        window.openSeries = function(name) {
-            const d = globalSeriesData[name];
-            document.getElementById('mTitle').innerText = name;
-            let h = '';
-            for (const [s, eps] of Object.entries(d.seasons || {})) {
-                let sortedEps = eps.sort((a, b) => parseInt(a.episode) - parseInt(b.episode));
-                h += `<div class="bg-gray-900/50 p-6 rounded-2xl border border-border">
-                        <h3 class="text-purple-500 font-black mb-4 uppercase tracking-widest text-sm">Season ${s}</h3>
-                        <div class="grid grid-cols-1 gap-3">`;
-                sortedEps.forEach(e => {
-                    h += `<button onclick="playMedia('${e.url}', '${name.replace(/'/g, "\\'")} - S${s} E${e.episode}')" class="flex items-center justify-between gap-3 p-3 bg-card border border-border rounded-xl hover:border-purple-500 transition text-left group">
-                            <span class="text-xs font-bold text-white">Episode ${e.episode}</span>
-                            <div class="w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center group-hover:bg-purple-500 transition">
-                                <svg class="w-3 h-3 text-purple-400 group-hover:text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"/></svg>
-                            </div>
-                          </button>`;
-                });
-                h += `</div></div>`;
+    fetch(`${API_URL}?action=get_all`).then(res => res.json()).then(data => {
+        document.getElementById('loading').style.display = 'none';
+        globalSeriesData = data.series || {};
+        
+        let series = [];
+        if (data.series) {
+            for (const [name, sData] of Object.entries(data.series)) {
+                series.push({ name: name, ...sData });
             }
-            document.getElementById('mBody').innerHTML = h;
-            document.getElementById('modal').classList.remove('hidden');
-        };
+        }
+        series.reverse(); // Reverse for latest first
 
-        window.playMedia = function(u, t) {
-            const isM = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            if(isM) { window.location.href = `intent:${u}#Intent;type=video/*;end`; } 
-            else {
-                const blob = new Blob(["#EXTM3U\n#EXTINF:-1," + t + "\n" + u], {type: "audio/mpegurl"});
-                const a = document.createElement("a");
-                a.href = URL.createObjectURL(blob);
-                a.download = t + ".m3u";
-                a.click();
-            }
-        };
-
-        window.closeModal = function() {
-            document.getElementById('modal').classList.add('hidden');
-        };
-
-        window.search = function() {
-            let v = document.getElementById('q').value.toLowerCase();
-            document.querySelectorAll('.item').forEach(i => { 
-                i.style.display = i.getAttribute('data-title').includes(v) ? 'block' : 'none'; 
-            });
-        };
+        let html = '';
+        
+        for (let i = 0; i < series.length; i++) {
+            const s = series[i];
+            html += `<div class="movie-card rounded-lg overflow-hidden item" data-title="${s.name.toLowerCase()}">
+                <img src="${s.logo || fallback}" class="w-full aspect-[2/3] object-cover">
+                <div class="p-3">
+                    <h3 class="text-xs font-bold truncate mb-3">${s.name}</h3>
+                    <button onclick="openSeries('${s.name.replace(/'/g, "\\'")}')" class="w-full bg-[#222] hover:bg-blue-600 py-1.5 rounded text-[10px] font-bold transition">VIEW EPISODES</button>
+                </div>
+            </div>`;
+        }
+        document.getElementById('grid').innerHTML = html;
     });
+
+    function playMedia(u, t) {
+        const isM = /Android|iPhone|iPad/i.test(navigator.userAgent);
+        if(isM) window.location.href = `intent:${u}#Intent;type=video/*;end`;
+        else {
+            const b = new Blob(["#EXTM3U\n#EXTINF:-1," + t + "\n" + u], {type: "audio/mpegurl"});
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(b); a.download = t + ".m3u"; a.click();
+        }
+    }
+
+    function openSeries(name) {
+        const d = globalSeriesData[name];
+        document.getElementById('mTitle').innerText = name;
+        let h = '';
+        Object.keys(d.seasons).sort((a,b)=>b-a).forEach(s => {
+            h += `<div class="text-[10px] font-bold text-blue-500 mt-3 mb-1 uppercase">Season ${s}</div>`;
+            d.seasons[s].forEach(e => {
+                h += `<div class="flex items-center justify-between bg-[#111] p-2 rounded border border-[#222]">
+                    <span class="text-[10px] truncate w-3/5">E${e.episode}: ${e.title || 'Episode '+e.episode}</span>
+                    <div class="flex gap-1">
+                        <button onclick="playMedia('${e.url}', '${e.title ? e.title.replace(/'/g, "\\'") : name}')" class="bg-blue-600 px-2 py-1 rounded text-[9px] font-bold">▶ PLAY</button>
+                        <a href="${e.url.replace('/api/file/', '/u/')}" target="_blank" class="bg-[#222] px-2 py-1 rounded text-[9px] font-bold text-center">⬇️ Download</a>
+                    </div>
+                </div>`;
+            });
+        });
+        document.getElementById('mBody').innerHTML = h;
+        document.getElementById('modal').classList.remove('hidden');
+    }
+
+    function closeModal() { document.getElementById('modal').classList.add('hidden'); }
+    
+    function search() {
+        let v = document.getElementById('q').value.toLowerCase();
+        document.querySelectorAll('.item').forEach(i => {
+            i.style.display = i.getAttribute('data-title').includes(v) ? 'block' : 'none';
+        });
+    }
     </script>
 </body>
 </html>
