@@ -23,7 +23,7 @@
                 <div class="absolute right-0 top-full mt-2 w-32 bg-[#111] border border-[#222] rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                     <a href="https://zxzxcxcc.github.io/flixcinema/" class="block px-4 py-2 text-xs hover:bg-[#222]">Home</a>
                     <a href="https://zxzxcxcc.github.io/flixcinema/movies.html" class="block px-4 py-2 text-xs hover:bg-[#222]">Movies</a>
-                     <a href="https://zxzxcxcc.github.io/flixcinema/series.html" class="block px-4 py-2 text-xs hover:bg-[#222]">Series</a>
+                    <a href="https://zxzxcxcc.github.io/flixcinema/series.html" class="block px-4 py-2 text-xs hover:bg-[#222]">Series</a>
                 </div>
             </div>
         </div>
@@ -74,26 +74,35 @@
         let maxLength = Math.max(movies.length, series.length);
         
         for (let i = 0; i < maxLength; i++) {
+            // Movie Card Generate
             if (movies[i]) {
                 const m = movies[i];
-                html += `<div class="movie-card rounded-lg overflow-hidden item" data-title="${(m.title||'').toLowerCase()}">
+                html += `<div class="movie-card rounded-lg overflow-hidden item relative" data-title="${(m.title||'').toLowerCase()}">
+                    <span class="absolute top-2 left-2 bg-blue-600/90 text-white px-2 py-1 text-[9px] font-bold rounded tracking-wider z-10">MOVIE</span>
                     <img src="${m.logo || fallback}" class="w-full aspect-[2/3] object-cover">
                     <div class="p-3">
                         <h3 class="text-xs font-bold truncate mb-3">${m.title}</h3>
                         <div class="flex flex-col gap-2">
-                            <button onclick="playMedia('${m.url}', '${m.title}')" class="w-full bg-blue-600 py-1.5 rounded text-[10px] font-bold">▶ PLAY</button>
+                            <button onclick="playMedia('${m.url}', '${m.title.replace(/'/g, "\\'")}')" class="w-full bg-blue-600 py-1.5 rounded text-[10px] font-bold">▶ PLAY</button>
                             <a href="${m.url.replace('/api/file/', '/u/')}" target="_blank" class="w-full bg-[#222] py-1.5 rounded text-[10px] font-bold text-center uppercase tracking-wide">DOWNLOAD</a>
                         </div>
                     </div>
                 </div>`;
             }
+            
+            // Series Card Generate
             if (series[i]) {
                 const s = series[i];
-                html += `<div class="movie-card rounded-lg overflow-hidden item" data-title="${s.name.toLowerCase()}">
+                // Caculate Seasons: S1 S2 S3
+                let seasonBadges = Object.keys(s.seasons || {}).sort((a,b)=>a-b).map(num => 'S'+num).join(' ');
+
+                html += `<div class="movie-card rounded-lg overflow-hidden item relative" data-title="${s.name.toLowerCase()}">
+                    <span class="absolute top-2 left-2 bg-purple-600/90 text-white px-2 py-1 text-[9px] font-bold rounded tracking-wider z-10">SERIES</span>
                     <img src="${s.logo || fallback}" class="w-full aspect-[2/3] object-cover">
                     <div class="p-3">
-                        <h3 class="text-xs font-bold truncate mb-3">${s.name}</h3>
-                        <button onclick="openSeries('${s.name.replace(/'/g, "\\'")}')" class="w-full bg-[#222] hover:bg-blue-600 py-1.5 rounded text-[10px] font-bold transition">VIEW EPISODES</button>
+                        <h3 class="text-xs font-bold truncate mb-1">${s.name}</h3>
+                        <div class="text-[10px] text-purple-400 font-bold mb-2 tracking-widest break-words">${seasonBadges}</div>
+                        <button onclick="openSeries('${s.name.replace(/'/g, "\\'")}')" class="w-full bg-[#222] hover:bg-purple-600 py-1.5 rounded text-[10px] font-bold transition">VIEW EPISODES</button>
                     </div>
                 </div>`;
             }
@@ -102,7 +111,7 @@
     });
 
     function playMedia(u, t) {
-        const isM = /Android|iPhone/i.test(navigator.userAgent);
+        const isM = /Android|iPhone|iPad/i.test(navigator.userAgent);
         if(isM) window.location.href = `intent:${u}#Intent;type=video/*;end`;
         else {
             const b = new Blob(["#EXTM3U\n#EXTINF:-1," + t + "\n" + u], {type: "audio/mpegurl"});
@@ -121,7 +130,7 @@
                 h += `<div class="flex items-center justify-between bg-[#111] p-2 rounded border border-[#222]">
                     <span class="text-[10px] truncate">E${e.episode}: ${e.title}</span>
                     <div class="flex gap-1">
-                        <button onclick="playMedia('${e.url}', '${e.title}')" class="bg-blue-600 px-2 py-1 rounded text-[9px]">▶ PLAY</button>
+                        <button onclick="playMedia('${e.url}', '${e.title ? e.title.replace(/'/g, "\\'") : name}')" class="bg-blue-600 px-2 py-1 rounded text-[9px]">▶ PLAY</button>
                         <a href="${e.url.replace('/api/file/', '/u/')}" target="_blank" class="bg-[#222] px-2 py-1 rounded text-[9px]">⬇️Download</a>
                     </div>
                 </div>`;
