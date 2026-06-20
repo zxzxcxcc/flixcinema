@@ -71,10 +71,15 @@
         
         for (let i = 0; i < series.length; i++) {
             const s = series[i];
-            html += `<div class="movie-card rounded-lg overflow-hidden item" data-title="${s.name.toLowerCase()}">
+            // Calculate Seasons: S1 S2 S3
+            let seasonBadges = Object.keys(s.seasons || {}).sort((a,b)=>a-b).map(num => 'S'+num).join(' ');
+
+            html += `<div class="movie-card rounded-lg overflow-hidden item relative" data-title="${s.name.toLowerCase()}">
+                <span class="absolute top-2 left-2 bg-purple-600/90 text-white px-2 py-1 text-[9px] font-bold rounded tracking-wider z-10">SERIES</span>
                 <img src="${s.logo || fallback}" class="w-full aspect-[2/3] object-cover">
                 <div class="p-3">
-                    <h3 class="text-xs font-bold truncate mb-3">${s.name}</h3>
+                    <h3 class="text-xs font-bold truncate mb-1">${s.name}</h3>
+                    <div class="text-[10px] text-purple-400 font-bold mb-2 tracking-widest break-words">${seasonBadges}</div>
                     <button onclick="openSeries('${s.name.replace(/'/g, "\\'")}')" class="w-full bg-[#222] hover:bg-blue-600 py-1.5 rounded text-[10px] font-bold transition">VIEW EPISODES</button>
                 </div>
             </div>`;
