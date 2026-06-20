@@ -121,8 +121,8 @@
                 h += `<div class="flex items-center justify-between bg-[#111] p-2 rounded border border-[#222]">
                     <span class="text-[10px] truncate">E${e.episode}: ${e.title}</span>
                     <div class="flex gap-1">
-                        <button onclick="playMedia('${e.url}', '${e.title}')" class="bg-blue-600 px-2 py-1 rounded text-[9px]">▶</button>
-                        <a href="${e.url.replace('/api/file/', '/u/')}" target="_blank" class="bg-[#222] px-2 py-1 rounded text-[9px]">⬇</a>
+                        <button onclick="playMedia('${e.url}', '${e.title}')" class="bg-blue-600 px-2 py-1 rounded text-[9px]">▶ PLAY</button>
+                        <a href="${e.url.replace('/api/file/', '/u/')}" target="_blank" class="bg-[#222] px-2 py-1 rounded text-[9px]">⬇️Download</a>
                     </div>
                 </div>`;
             });
