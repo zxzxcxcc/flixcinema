@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>FlixCinema</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -19,6 +18,14 @@
     <nav class="glass fixed w-full top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 flex justify-between items-center h-16">
             <h1 class="text-xl font-bold text-white tracking-wider">FLIX<span class="text-blue-500">CINEMA</span></h1>
+            <div class="relative group">
+                <button class="text-sm uppercase font-bold text-gray-400">Menu ▾</button>
+                <div class="absolute right-0 top-full mt-2 w-32 bg-[#111] border border-[#222] rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                    <a href="https://zxzxcxcc.github.io/flixcinema/" class="block px-4 py-2 text-xs hover:bg-[#222]">Home</a>
+                    <a href="https://zxzxcxcc.github.io/flixcinema/movies.html" class="block px-4 py-2 text-xs hover:bg-[#222]">Movies</a>
+                    <a href="https://zxzxcxcc.github.io/flixcinema/series.html" class="block px-4 py-2 text-xs hover:bg-[#222]">Series</a>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -29,7 +36,7 @@
 
     <div class="max-w-7xl mx-auto px-6 mt-8">
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4" id="grid">
-            <div class="col-span-full text-center text-gray-600 py-10" id="loading">Loading data...</div>
+            <div class="col-span-full text-center text-gray-600 py-10" id="loading">Loading...</div>
         </div>
     </div>
 
@@ -44,22 +51,17 @@
     </div>
 
     <script>
-    // Agar site HTTP par hai to API bhi http use karein
-    const API_URL = "http://toolsmax.site/flixphp/api.php";
+    const API_URL = "https://toolsmax.site/flixphp/api.php";
     const fallback = "https://i.quotev.com/b2gtjqawaaaa.jpg";
     let globalSeriesData = {};
 
-    // Fetch call with strict cache-busting
-    fetch(`${API_URL}?action=get_all&t=${new Date().getTime()}`, {
-        method: 'GET',
-        mode: 'cors'
-    })
-    .then(res => res.json())
-    .then(data => {
+    fetch(`${API_URL}?action=get_all`).then(res => res.json()).then(data => {
         document.getElementById('loading').style.display = 'none';
         globalSeriesData = data.series || {};
         
+        // Movies: No reverse (Top is new)
         let movies = data.movies || [];
+        // Series: Reverse original
         let series = [];
         if (data.series) {
             for (const [name, sData] of Object.entries(data.series)) {
@@ -72,6 +74,7 @@
         let maxLength = Math.max(movies.length, series.length);
         
         for (let i = 0; i < maxLength; i++) {
+            // Movie Card Generate
             if (movies[i]) {
                 const m = movies[i];
                 html += `<div class="movie-card rounded-lg overflow-hidden item relative" data-title="${(m.title||'').toLowerCase()}">
@@ -79,27 +82,32 @@
                     <img src="${m.logo || fallback}" class="w-full aspect-[2/3] object-cover">
                     <div class="p-3">
                         <h3 class="text-xs font-bold truncate mb-3">${m.title}</h3>
-                        <button onclick="playMedia('${m.url}', '${m.title.replace(/'/g, "\\'")}')" class="w-full bg-blue-600 py-1.5 rounded text-[10px] font-bold">▶ PLAY</button>
+                        <div class="flex flex-col gap-2">
+                            <button onclick="playMedia('${m.url}', '${m.title.replace(/'/g, "\\'")}')" class="w-full bg-blue-600 py-1.5 rounded text-[10px] font-bold">▶ PLAY</button>
+                            <a href="${m.url.replace('/api/file/', '/u/')}" target="_blank" class="w-full bg-[#222] py-1.5 rounded text-[10px] font-bold text-center uppercase tracking-wide">DOWNLOAD</a>
+                        </div>
                     </div>
                 </div>`;
             }
+            
+            // Series Card Generate
             if (series[i]) {
                 const s = series[i];
+                // Caculate Seasons: S1 S2 S3
+                let seasonBadges = Object.keys(s.seasons || {}).sort((a,b)=>a-b).map(num => 'S'+num).join(' ');
+
                 html += `<div class="movie-card rounded-lg overflow-hidden item relative" data-title="${s.name.toLowerCase()}">
                     <span class="absolute top-2 left-2 bg-purple-600/90 text-white px-2 py-1 text-[9px] font-bold rounded tracking-wider z-10">SERIES</span>
                     <img src="${s.logo || fallback}" class="w-full aspect-[2/3] object-cover">
                     <div class="p-3">
                         <h3 class="text-xs font-bold truncate mb-1">${s.name}</h3>
+                        <div class="text-[10px] text-purple-400 font-bold mb-2 tracking-widest break-words">${seasonBadges}</div>
                         <button onclick="openSeries('${s.name.replace(/'/g, "\\'")}')" class="w-full bg-[#222] hover:bg-purple-600 py-1.5 rounded text-[10px] font-bold transition">VIEW EPISODES</button>
                     </div>
                 </div>`;
             }
         }
         document.getElementById('grid').innerHTML = html;
-    })
-    .catch(err => {
-        document.getElementById('loading').innerHTML = "Error loading data. Check console.";
-        console.error("Fetch Error:", err);
     });
 
     function playMedia(u, t) {
@@ -119,9 +127,12 @@
         Object.keys(d.seasons).sort((a,b)=>b-a).forEach(s => {
             h += `<div class="text-[10px] font-bold text-blue-500 mt-3 mb-1 uppercase">Season ${s}</div>`;
             d.seasons[s].forEach(e => {
-                h += `<div class="flex items-center justify-between bg-[#111] p-2 rounded border border-[#222] mb-1">
+                h += `<div class="flex items-center justify-between bg-[#111] p-2 rounded border border-[#222]">
                     <span class="text-[10px] truncate">E${e.episode}: ${e.title}</span>
-                    <button onclick="playMedia('${e.url}', '${e.title ? e.title.replace(/'/g, "\\'") : name}')" class="bg-blue-600 px-2 py-1 rounded text-[9px]">▶ PLAY</button>
+                    <div class="flex gap-1">
+                        <button onclick="playMedia('${e.url}', '${e.title ? e.title.replace(/'/g, "\\'") : name}')" class="bg-blue-600 px-2 py-1 rounded text-[9px]">▶ PLAY</button>
+                        <a href="${e.url.replace('/api/file/', '/u/')}" target="_blank" class="bg-[#222] px-2 py-1 rounded text-[9px]">⬇️Download</a>
+                    </div>
                 </div>`;
             });
         });
