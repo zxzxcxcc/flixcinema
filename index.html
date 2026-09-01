@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="hi" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlixCinema — Watch & Stream</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --netflix-red: #e50914;
+            --netflix-dark: #141414;
+            --netflix-card: #1f1f1f;
+            --text-gray: #aaaaaa;
+        }
+
+        body {
+            background-color: var(--netflix-dark);
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(20,20,20,0.85) 70%, transparent 100%);
+            backdrop-filter: blur(10px);
+        }
+        .brand-logo {
+            color: var(--netflix-red) !important;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .search-box {
+            background: #2b2b2b;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: #fff;
+            padding: 10px 16px;
+        }
+        .search-box:focus {
+            background: #333;
+            border-color: var(--netflix-red);
+            box-shadow: 0 0 10px rgba(229, 9, 20, 0.4);
+            color: #fff;
+        }
+        .filter-select {
+            background: #2b2b2b;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 8px;
+            padding: 10px 14px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-left: 4px solid var(--netflix-red);
+            padding-left: 10px;
+            margin-bottom: 15px;
+        }
+
+        .live-tv-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 14px;
+            padding-bottom: 10px;
+            scrollbar-width: none;
+        }
+        .live-tv-container::-webkit-scrollbar {
+            display: none;
+        }
+        .live-tv-card {
+            flex: 0 0 130px;
+            background: var(--netflix-card);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #333;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .live-tv-card:hover {
+            transform: scale(1.05);
+            border-color: var(--netflix-red);
+        }
+        .live-tv-logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 8px;
+        }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+        }
+        @media (min-width: 768px) {
+            .media-grid {
+                grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+                gap: 20px;
+            }
+        }
+        .media-card {
+            background: var(--netflix-card);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #2a2a2a;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .media-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.7);
+            border-color: #444;
+        }
+        .poster-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 145%;
+            background: #252525;
+        }
+        .media-poster {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .badge-quality {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.85);
+            border: 1px solid #555;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border-radius: 4px;
+            padding: 2px 6px;
+        }
+        .badge-type {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: var(--netflix-red);
+            font-size: 0.7rem;
+            font-weight: 600;
+            border-radius: 4px;
+            padding: 2px 6px;
+            text-transform: uppercase;
+        }
+
+        .media-info {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+        .media-title {
+            font-size: 0.92rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+        .media-meta {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            margin-bottom: 12px;
+        }
+
+        .btn-netflix {
+            background-color: var(--netflix-red);
+            color: #fff;
+            font-weight: 600;
+            border: none;
+            font-size: 0.8rem;
+        }
+        .btn-netflix:hover {
+            background-color: #b80710;
+            color: #fff;
+        }
+        .btn-download {
+            background: #2a2a2a;
+            color: #fff;
+            border: 1px solid #444;
+            font-size: 0.8rem;
+        }
+        .btn-download:hover {
+            background: #3a3a3a;
+            color: #fff;
+        }
+
+        .modal-content {
+            background-color: #181818;
+            border: 1px solid #333;
+            border-radius: 12px;
+        }
+        .ep-card {
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 6-Digit PIN Overlay */
+        #pinLockOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 15, 15, 0.98);
+            backdrop-filter: blur(15px);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .pin-card {
+            background: #1c1c1c;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .pin-input {
+            letter-spacing: 12px;
+            font-size: 1.8rem;
+            text-align: center;
+            font-weight: bold;
+            background: #282828;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 10px;
+        }
+        .pin-input:focus {
+            background: #303030;
+            border-color: var(--netflix-red);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(229, 9, 20, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 6-Digit PIN Screen Overlay -->
+    <div id="pinLockOverlay">
+        <div class="pin-card">
+            <i class="bi bi-shield-lock-fill fs-1 text-danger mb-2 d-block"></i>
+            <h4 class="fw-bold mb-1">Enter 6-Digit PIN</h4>
+            <p class="text-secondary small mb-3">FlixCinema ko unlock karne ke liye PIN dalein</p>
+            
+            <form id="pinForm" onsubmit="verifyPin(event)">
+                <input type="password" id="pinCode" class="form-control pin-input mb-3" maxlength="6" pattern="\d{6}" placeholder="******" required autofocus>
+                
+                <div id="pinError" class="alert alert-danger py-2 small d-none mb-3"></div>
+                
+                <button type="submit" class="btn btn-netflix w-100 py-2 fw-bold mb-3" id="unlockBtn">
+                    <i class="bi bi-unlock me-1"></i> Unlock Access
+                </button>
+            </form>
+
+            <div class="border-top border-secondary pt-3 mt-2">
+                <p class="text-light small mb-2"><i class="bi bi-info-circle text-info me-1"></i> Join WhatsApp channel for PIN</p>
+                <a href="https://whatsapp.com" target="_blank" class="btn btn-success btn-sm w-100 fw-bold">
+                    <i class="bi bi-whatsapp me-1"></i> Get PIN on WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Centered Navbar -->
+    <nav class="navbar navbar-dark sticky-top py-3">
+        <div class="container text-center">
+            <a class="brand-logo" href="#">FlixCinema</a>
+        </div>
+    </nav>
+
+    <div class="container py-3" style="max-width: 1200px;">
+        
+        <!-- Live TV Carousel (Fixed on Top) -->
+        <div id="liveTvSection" class="mb-4 d-none">
+            <div class="section-title text-info"><i class="bi bi-broadcast me-1"></i> Live TV Channels</div>
+            <div class="live-tv-container" id="liveTvContainer"></div>
+        </div>
+
+        <!-- Search and Category Filter -->
+        <div class="row g-2 mb-4">
+            <div class="col-12 col-md-8">
+                <input type="text" id="liveSearch" class="form-control search-box" placeholder="Search movies, web series..." oninput="applyFilters()">
+            </div>
+            <div class="col-12 col-md-4">
+                <select id="catFilter" class="form-select filter-select w-100" onchange="applyFilters()">
+                    <option value="ALL">All Categories</option>
+                    <option value="LIVETV">Live TV Only</option>
+                    <option value="MOVIE">Movies Only</option>
+                    <option value="SERIES">Web Series Only</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Media Feed (1 Movie, 1 Series Top-to-Bottom order) -->
+        <div id="mainFeedWrapper">
+            <div class="section-title" id="feedTitle"><i class="bi bi-fire me-1"></i> Latest Movies & Series</div>
+            <div class="media-grid" id="mainGrid"></div>
+        </div>
+
+        <!-- Live TV Grid (Visible when Live TV Only filter is active) -->
+        <div id="liveTvGridWrapper" class="d-none">
+            <div class="section-title text-info"><i class="bi bi-broadcast me-1"></i> Live Channels</div>
+            <div class="media-grid" id="liveTvGrid"></div>
+        </div>
+
+        <!-- Infinite Scroll Sentinel -->
+        <div id="scrollSentinel" class="text-center py-4">
+            <div class="spinner-border text-danger d-none" id="scrollSpinner" role="status"></div>
+            <small class="text-secondary d-none" id="endMessage">All content loaded</small>
+        </div>
+
+    </div>
+
+    <!-- Web Series Episodes Pop-up Modal -->
+    <div class="modal fade" id="seriesModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title fw-bold" id="seriesModalTitle">Series Title</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-pills mb-3" id="seasonTabs"></ul>
+                    <div id="episodesList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let rawData = { liveTv: [], movies: [], series: [] };
+        let mixedFeed = [];
+        let filteredFeed = [];
+        let loadedCount = 0;
+        const chunkSize = 20;
+
+        // 1. PIN Verification & Auto-Loader Trigger
+        async function verifyPin(e) {
+            e.preventDefault();
+            const pin = document.getElementById('pinCode').value;
+            const btn = document.getElementById('unlockBtn');
+            const err = document.getElementById('pinError');
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Verifying...';
+            err.classList.add('d-none');
+
+            try {
+                const res = await fetch('admin/pin.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pin: pin })
+                });
+                const result = await res.json();
+
+                if (result.status === 'success') {
+                    sessionStorage.setItem('fc_unlocked', 'true');
+                    document.getElementById('pinLockOverlay').style.display = 'none';
+                    await loadContent();
+                } else {
+                    err.innerText = result.message || 'Galat PIN!';
+                    err.classList.remove('d-none');
+                }
+            } catch(e) {
+                err.innerText = 'Network error. Please try again.';
+                err.classList.remove('d-none');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-unlock me-1"></i> Unlock Access';
+        }
+
+        // Check Unlock Status on Initial Load
+        if (sessionStorage.getItem('fc_unlocked') === 'true') {
+            document.getElementById('pinLockOverlay').style.display = 'none';
+            loadContent();
+        }
+
+        // URL Converters
+        function getPlayableUrl(link) {
+            if (!link) return '';
+            let clean = link.trim();
+            if (clean.includes('/u/')) return clean.replace('/u/', '/api/file/');
+            if (clean.includes('/file/')) return clean.replace('/file/', '/api/file/');
+            return clean;
+        }
+
+        function getDownloadableUrl(link) {
+            if (!link) return '';
+            let clean = link.trim();
+            if (clean.includes('/api/file/')) return clean.replace('/api/file/', '/u/');
+            return clean;
+        }
+
+        // 2. Android Video Intent Chooser (No Pop-up Block) & Desktop M3U Downloader
+        function triggerPlayer(title, streamLink) {
+            const finalLink = getPlayableUrl(streamLink);
+            const isAndroid = /Android/i.test(navigator.userAgent);
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+            if (isAndroid) {
+                const cleanUrl = finalLink.replace(/^https?:\/\//i, '');
+                const scheme = finalLink.startsWith('https') ? 'https' : 'http';
+                const intentUrl = `intent://${cleanUrl}#Intent;scheme=${scheme};type=video/*;action=android.intent.action.VIEW;category=android.intent.category.DEFAULT;category=android.intent.category.BROWSABLE;S.title=${encodeURIComponent(title)};end`;
+                
+                const link = document.createElement('a');
+                link.href = intentUrl;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else if (isIOS) {
+                window.location.href = `vlc://${finalLink}`;
+                setTimeout(() => { window.location.href = finalLink; }, 1000);
+            } else {
+                const m3uContent = `#EXTM3U\n#EXTINF:-1,${title}\n${finalLink}`;
+                const blob = new Blob([m3uContent], { type: 'audio/x-mpegurl' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${title.replace(/[^a-zA-Z0-9]/g, '_')}.m3u`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // Load Content
+        async function loadContent() {
+            try {
+                const res = await fetch('admin/save_m3u.php');
+                const json = await res.json();
+                
+                if (json.status === 'success') {
+                    rawData = json.data;
+                    renderLiveTvCarousel(rawData.liveTv || []);
+                    prepareInterleavedFeed();
+                    resetAndRender();
+                }
+            } catch (err) {
+                console.error("Content Loading Error:", err);
+            }
+        }
+
+        // Live TV Horizontal Bar
+        function renderLiveTvCarousel(tvList) {
+            const container = document.getElementById('liveTvContainer');
+            const section = document.getElementById('liveTvSection');
+            if (!tvList || tvList.length === 0) return;
+
+            section.classList.remove('d-none');
+            container.innerHTML = tvList.map(tv => `
+                <div class="live-tv-card" onclick="triggerPlayer('${tv.title}', '${tv.link}')">
+                    <img src="${tv.poster}" class="live-tv-logo" loading="lazy" onerror="this.src='https://via.placeholder.com/60?text=TV'">
+                    <div class="small fw-semibold text-truncate">${tv.title}</div>
+                    <span class="badge text-bg-danger" style="font-size: 0.65rem;">LIVE</span>
+                </div>
+            `).join('');
+        }
+
+        // 3. Proper Top-First Interleaved Feed
+        function prepareInterleavedFeed() {
+            const movies = (rawData.movies || []).map(m => ({ ...m, feedType: 'MOVIE' }));
+            const seriesList = (rawData.series || []);
+            
+            // Reversing series ensures newest uploaded series (at top of file) appears on top
+            const series = [...seriesList].reverse().map(s => ({ ...s, feedType: 'SERIES' }));
+            
+            mixedFeed = [];
+            const maxLen = Math.max(movies.length, series.length);
+            for (let i = 0; i < maxLen; i++) {
+                if (i < movies.length) mixedFeed.push(movies[i]);
+                if (i < series.length) mixedFeed.push(series[i]);
+            }
+
+            filteredFeed = [...mixedFeed];
+        }
+
+        // Search & Category Handler
+        function applyFilters() {
+            const q = document.getElementById('liveSearch').value.toLowerCase().trim();
+            const cat = document.getElementById('catFilter').value;
+
+            const mainFeedWrapper = document.getElementById('mainFeedWrapper');
+            const liveTvGridWrapper = document.getElementById('liveTvGridWrapper');
+
+            if (cat === 'LIVETV') {
+                mainFeedWrapper.classList.add('d-none');
+                liveTvGridWrapper.classList.remove('d-none');
+                renderLiveTvGrid(q);
+                return;
+            } else {
+                mainFeedWrapper.classList.remove('d-none');
+                liveTvGridWrapper.classList.add('d-none');
+            }
+
+            filteredFeed = mixedFeed.filter(item => {
+                const matchQuery = !q || item.title.toLowerCase().includes(q) || (item.genre && item.genre.toLowerCase().includes(q));
+                const matchCat = (cat === 'ALL') || (item.feedType === cat);
+                return matchQuery && matchCat;
+            });
+
+            resetAndRender();
+        }
+
+        function renderLiveTvGrid(query) {
+            const grid = document.getElementById('liveTvGrid');
+            const list = (rawData.liveTv || []).filter(tv => !query || tv.title.toLowerCase().includes(query));
+            
+            if (list.length === 0) {
+                grid.innerHTML = '<div class="col-12 text-center text-secondary py-5">No live channels found.</div>';
+                return;
+            }
+
+            grid.innerHTML = list.map(tv => `
+                <div class="media-card p-3 text-center cursor-pointer" onclick="triggerPlayer('${tv.title}', '${tv.link}')">
+                    <img src="${tv.poster}" class="mx-auto mb-2" style="width:70px; height:70px; object-fit:contain;" loading="lazy" onerror="this.src='https://via.placeholder.com/70?text=TV'">
+                    <div class="fw-bold text-truncate">${tv.title}</div>
+                    <span class="badge text-bg-info mt-2">${tv.quality || 'Auto'}</span>
+                </div>
+            `).join('');
+        }
+
+        function resetAndRender() {
+            loadedCount = 0;
+            document.getElementById('mainGrid').innerHTML = '';
+            document.getElementById('endMessage').classList.add('d-none');
+            loadNextChunk();
+        }
+
+        function loadNextChunk() {
+            const grid = document.getElementById('mainGrid');
+            const total = filteredFeed.length;
+
+            if (total === 0) {
+                grid.innerHTML = '<div class="col-12 text-center text-secondary py-5"><i class="bi bi-search fs-1 d-block mb-2"></i>No matching movies or series found.</div>';
+                return;
+            }
+
+            if (loadedCount >= total) {
+                document.getElementById('endMessage').classList.remove('d-none');
+                return;
+            }
+
+            const chunk = filteredFeed.slice(loadedCount, loadedCount + chunkSize);
+            let html = '';
+
+            chunk.forEach(item => {
+                const isMovie = item.feedType === 'MOVIE';
+                const typeBadge = isMovie ? 'Movie' : 'Series';
+                const qualityBadge = item.quality ? `<span class="badge-quality">${item.quality}</span>` : '';
+                const poster = item.poster || 'https://via.placeholder.com/300x450?text=FlixCinema';
+
+                let actionBtn = '';
+                if (isMovie) {
+                    const dLink = getDownloadableUrl(item.link);
+                    actionBtn = `
+                        <div class="d-flex gap-1 mt-2">
+                            <button class="btn btn-netflix btn-sm w-50 py-1" onclick="triggerPlayer('${item.title}', '${item.link}')">
+                                <i class="bi bi-play-fill"></i> Play
+                            </button>
+                            <a href="${dLink}" target="_blank" class="btn btn-download btn-sm w-50 py-1 text-center text-decoration-none">
+                                <i class="bi bi-download"></i> Get
+                            </a>
+                        </div>
+                    `;
+                } else {
+                    actionBtn = `
+                        <button class="btn btn-netflix btn-sm w-100 py-1 mt-2" onclick="openSeriesModal('${item.id}')">
+                            <i class="bi bi-collection-play me-1"></i> View Episodes
+                        </button>
+                    `;
+                }
+
+                html += `
+                    <div class="media-card">
+                        <div class="poster-wrapper">
+                            <img src="${poster}" class="media-poster" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=FlixCinema'">
+                            <span class="badge-type">${typeBadge}</span>
+                            ${qualityBadge}
+                        </div>
+                        <div class="media-info">
+                            <div>
+                                <div class="media-title" title="${item.title}">${item.title}</div>
+                                <div class="media-meta">${item.year || '2026'} • ${item.genre || 'Entertainment'}</div>
+                            </div>
+                            ${actionBtn}
+                        </div>
+                    </div>
+                `;
+            });
+
+            grid.insertAdjacentHTML('beforeend', html);
+            loadedCount += chunk.length;
+
+            if (loadedCount >= total) {
+                document.getElementById('endMessage').classList.remove('d-none');
+            }
+        }
+
+        // Infinite Scroll Observer
+        const sentinel = document.getElementById('scrollSentinel');
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && loadedCount < filteredFeed.length) {
+                loadNextChunk();
+            }
+        }, { rootMargin: '200px' });
+        observer.observe(sentinel);
+
+        // Web Series Modal Logic
+        let currentSeries = null;
+        function openSeriesModal(seriesId) {
+            currentSeries = (rawData.series || []).find(s => s.id === seriesId);
+            if (!currentSeries) return;
+
+            document.getElementById('seriesModalTitle').innerText = currentSeries.title;
+            const tabs = document.getElementById('seasonTabs');
+            tabs.innerHTML = '';
+
+            (currentSeries.seasons || []).forEach((season, idx) => {
+                const sNum = idx + 1;
+                tabs.innerHTML += `
+                    <li class="nav-item">
+                        <button class="nav-link ${idx === 0 ? 'active btn-danger' : 'text-light'}" onclick="renderSeasonEpisodes(${idx}, this)">
+                            Season ${sNum}
+                        </button>
+                    </li>
+                `;
+            });
+
+            renderSeasonEpisodes(0);
+            const modal = new bootstrap.Modal(document.getElementById('seriesModal'));
+            modal.show();
+        }
+
+        function renderSeasonEpisodes(seasonIdx, btnEl) {
+            if (btnEl) {
+                document.querySelectorAll('#seasonTabs .nav-link').forEach(el => {
+                    el.classList.remove('active', 'btn-danger');
+                    el.classList.add('text-light');
+                });
+                btnEl.classList.add('active', 'btn-danger');
+                btnEl.classList.remove('text-light');
+            }
+
+            const epList = document.getElementById('episodesList');
+            const episodes = currentSeries.seasons[seasonIdx]?.episodes || [];
+            
+            if (episodes.length === 0) {
+                epList.innerHTML = '<div class="text-secondary py-3 text-center">No episodes available in this season.</div>';
+                return;
+            }
+
+            epList.innerHTML = episodes.map((ep, idx) => {
+                const epTitle = `${currentSeries.title} S${seasonIdx + 1} E${idx + 1} - ${ep.title}`;
+                const dLink = getDownloadableUrl(ep.link);
+                return `
+                    <div class="ep-card">
+                        <div class="fw-semibold text-truncate me-2" style="max-width: 60%;">
+                            <span class="text-danger me-1">E${idx + 1}</span> ${ep.title}
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-netflix btn-sm px-3" onclick="triggerPlayer('${epTitle}', '${ep.link}')">
+                                <i class="bi bi-play-fill"></i> Play
+                            </button>
+                            <a href="${dLink}" target="_blank" class="btn btn-download btn-sm px-3 text-decoration-none">
+                                <i class="bi bi-download"></i>
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
