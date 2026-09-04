@@ -447,7 +447,7 @@
             err.classList.add('d-none');
 
             try {
-                const res = await fetch('admin/pin.php', {
+                const res = await fetch('https://toolsmax.site/flixcinema/admin/pin.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ pin: pin })
@@ -534,7 +534,7 @@
         // Load Content
         async function loadContent() {
             try {
-                const res = await fetch('admin/save_m3u.php');
+                const res = await fetch('https://toolsmax.site/flixcinema/admin/save_m3u.php');
                 const json = await res.json();
                 
                 if (json.status === 'success') {
