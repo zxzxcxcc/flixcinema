@@ -277,23 +277,22 @@
             border-color: #666;
         }
 
-        /* 4-5 Times Pulse Highlight Animation for Shared Item */
-        @keyframes sharedPulse {
+        /* Permanent Smooth Neon Breathing Glow */
+        @keyframes permanentGlow {
             0%, 100% {
-                border-color: #2a2a2a;
-                box-shadow: 0 12px 25px rgba(0,0,0,0.7);
-                transform: scale(1);
+                border-color: rgba(229, 9, 20, 0.4);
+                box-shadow: 0 0 10px rgba(229, 9, 20, 0.25);
             }
             50% {
-                border-color: var(--netflix-red);
-                box-shadow: 0 0 25px rgba(229, 9, 20, 0.9), inset 0 0 15px rgba(229, 9, 20, 0.4);
-                transform: scale(1.03);
+                border-color: #e50914;
+                box-shadow: 0 0 25px rgba(229, 9, 20, 0.85), inset 0 0 12px rgba(229, 9, 20, 0.35);
             }
         }
+
         .highlight-pulse {
-            animation: sharedPulse 0.9s ease-in-out 5;
-            border-color: var(--netflix-red) !important;
-            z-index: 10;
+            animation: permanentGlow 1.6s ease-in-out infinite !important;
+            border-width: 2px !important;
+            z-index: 5;
         }
 
         .modal-content {
@@ -466,7 +465,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Pura exact link har backend endpoint ke liye
         const FULL_SAVE_M3U_URL = "https://toolsmax.site/flixcinema/admin/save_m3u.php";
         const FULL_PIN_URL = "https://toolsmax.site/flixcinema/admin/pin.php";
 
@@ -513,7 +511,6 @@
             let success = false;
             let resMessage = '';
 
-            // Direct Call + Fallback
             try {
                 const res = await fetch(FULL_PIN_URL, {
                     method: 'POST',
@@ -528,7 +525,6 @@
                 }
             } catch(e) {
                 console.error("PIN Verification direct error, retrying fallback:", e);
-                // Fallback attempt
                 try {
                     const fallbackRes = await fetch('admin/pin.php', {
                         method: 'POST',
@@ -611,7 +607,7 @@
             }
         }
 
-        // Load Content (Dusri hosting par CORS block na ho isliye Proxy + Direct fallback)
+        // Load Content (Proxy + Direct fallback)
         async function loadContent() {
             const ts = Date.now();
             const sources = [
@@ -636,7 +632,7 @@
                         }
                     }
                 } catch (e) {
-                    // Agla try karega
+                    // Try next source
                 }
             }
 
@@ -686,7 +682,7 @@
                 if (i < series.length) mixedFeed.push(series[i]);
             }
 
-            // Agar koi Shared Link se aaya hai toh woh item sabse upar (Top) par aayega
+            // Agar koi Shared Link se aaya hai toh woh item feed me sabse upar rahega
             if (sharedItemId) {
                 const targetIndex = mixedFeed.findIndex(item => String(item.id) === String(sharedItemId));
                 if (targetIndex > -1) {
@@ -775,7 +771,6 @@
                 const isShared = (sharedItemId && String(item.id) === String(sharedItemId));
                 const safeTitle = (item.title || '').replace(/'/g, "\\'");
 
-                // Series me year/date nahi dikhega, sirf genre dikhega
                 const metaText = isMovie 
                     ? `${item.year || '2026'} • ${item.genre || 'Entertainment'}` 
                     : `${item.genre || 'Entertainment'}`;
@@ -830,7 +825,6 @@
             grid.insertAdjacentHTML('beforeend', html);
             loadedCount += chunk.length;
 
-            // Shared card par smooth scroll karna
             if (sharedItemId && document.getElementById(`card_${sharedItemId}`)) {
                 setTimeout(() => {
                     const el = document.getElementById(`card_${sharedItemId}`);
