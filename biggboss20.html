@@ -6,12 +6,12 @@
   <title>Bigg Boss Season 20 - FlixCinema</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <style>
     :root {
       --primary: #f59e0b;
-      --primary-glow: rgba(245, 158, 11, 0.35);
+      --primary-glow: rgba(245, 158, 11, 0.4);
       --bg-dark: #07090e;
       --card-surface: #12151f;
       --card-border: rgba(255, 255, 255, 0.08);
@@ -30,7 +30,7 @@
     }
 
     body {
-      background: radial-gradient(circle at top, #151a2a 0%, var(--bg-dark) 45%);
+      background: radial-gradient(circle at top, #161c2e 0%, var(--bg-dark) 50%);
       color: var(--text-white);
       min-height: 100vh;
       padding-bottom: 50px;
@@ -39,22 +39,39 @@
     /* Header Section */
     .header {
       text-align: center;
-      padding: 22px 15px 16px;
-      position: relative;
+      padding: 20px 15px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .header-logo {
-      max-width: 140px;
-      width: 40%;
+      max-width: 130px;
+      width: 38%;
       height: auto;
       object-fit: contain;
-      filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.2));
-      transition: transform 0.3s ease;
+      filter: drop-shadow(0 4px 14px rgba(245, 158, 11, 0.25));
     }
 
+    /* Season 20 Badge */
+    .season-badge {
+      display: inline-block;
+      margin-top: 8px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #000;
+      font-weight: 800;
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      padding: 3px 12px;
+      border-radius: 20px;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
+      text-transform: uppercase;
+    }
+
+    /* Powered by FlixCinema */
     .brand-tag {
       margin-top: 6px;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--text-sub);
       letter-spacing: 0.5px;
     }
@@ -63,7 +80,6 @@
       color: var(--primary);
       text-decoration: none;
       font-weight: 600;
-      transition: opacity 0.2s;
     }
 
     .brand-tag a:hover {
@@ -91,7 +107,7 @@
       border: 1px solid var(--card-border);
       display: flex;
       flex-direction: column;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
       transition: transform 0.2s ease, border-color 0.2s ease;
     }
 
@@ -117,15 +133,15 @@
 
     .hd-badge {
       position: absolute;
-      top: 7px;
-      left: 7px;
-      background: rgba(0, 0, 0, 0.7);
+      top: 6px;
+      left: 6px;
+      background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(4px);
       color: var(--primary);
       border: 1px solid rgba(245, 158, 11, 0.4);
-      font-size: 0.65rem;
+      font-size: 0.62rem;
       font-weight: 700;
-      padding: 2px 6px;
+      padding: 2px 5px;
       border-radius: 4px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -140,9 +156,9 @@
     }
 
     .ep-name {
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-weight: 600;
-      line-height: 1.3;
+      line-height: 1.35;
       color: #f1f5f9;
       margin-bottom: 12px;
       display: -webkit-box;
@@ -152,7 +168,7 @@
       min-height: 2.3em;
     }
 
-    /* Button Layout */
+    /* Buttons */
     .button-group {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -165,10 +181,10 @@
       justify-content: center;
       gap: 4px;
       text-decoration: none;
-      padding: 8px 4px;
+      padding: 8px 2px;
       border-radius: 7px;
-      font-size: 0.8rem;
-      font-weight: 600;
+      font-size: 0.78rem;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.2s ease;
     }
@@ -180,13 +196,13 @@
     .btn-stream {
       background: var(--primary);
       color: #0b0d14;
-      box-shadow: 0 2px 10px var(--primary-glow);
+      box-shadow: 0 2px 8px var(--primary-glow);
     }
 
     .btn-stream svg {
       fill: #0b0d14;
-      width: 13px;
-      height: 13px;
+      width: 12px;
+      height: 12px;
     }
 
     .btn-dl {
@@ -197,25 +213,18 @@
 
     .btn-dl svg {
       fill: #cbd5e1;
-      width: 13px;
-      height: 13px;
+      width: 12px;
+      height: 12px;
     }
 
-    /* State messages */
-    .loader {
+    /* Status Messages */
+    .status-msg {
       text-align: center;
-      padding: 50px 0;
+      padding: 50px 15px;
       color: var(--text-sub);
-      font-size: 0.95rem;
-      grid-column: span 2;
-    }
-
-    .empty-box {
-      text-align: center;
-      padding: 40px 15px;
-      color: var(--text-sub);
-      grid-column: span 2;
       font-size: 0.9rem;
+      grid-column: span 2;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -224,9 +233,10 @@
   <header class="header">
     <img 
       src="https://mir-s3-cdn-cf.behance.net/projects/404/83533e226955217.Y3JvcCw2MTMsNDc5LDM5MywxNTM.png" 
-      alt="Bigg Boss Season 20" 
+      alt="Bigg Boss" 
       class="header-logo"
     >
+    <div class="season-badge">SEASON - 20</div>
     <div class="brand-tag">
       Powered by <a href="https://zxzxcxcc.github.io/flixcinema/" target="_blank" rel="noopener noreferrer">FlixCinema</a>
     </div>
@@ -234,40 +244,75 @@
 
   <main class="container">
     <div class="episodes-grid" id="episodesList">
-      <div class="loader">Episodes load ho rahe hain...</div>
+      <div class="status-msg">Episodes load ho rahe hain...</div>
     </div>
   </main>
 
   <script>
-    // JSON file ka path
-    const JSON_URL = 'https://toolsmax.site/flixcinema/bigboss/episodes.json';
+    // Exact path check
+    const BASE_PATH = 'https://toolsmax.site/flixcinema/bigboss/';
+    const POSSIBLE_FILES = ['episodes.json', 'episode.json', 'data.json'];
     const DEFAULT_POSTER = "https://image.tmdb.org/t/p/w500/k5ope1puShzLycqcj3FIoGAPjva.jpg";
+
+    async function fetchJSONData() {
+      // Multiple file names try karega taaki file name match issue na rahe
+      for (const fileName of POSSIBLE_FILES) {
+        try {
+          const url = `${BASE_PATH}${fileName}?_nocache=${Date.now()}`;
+          const res = await fetch(url);
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data)) return data;
+          }
+        } catch (e) {
+          // agla try karega
+        }
+      }
+      return null;
+    }
 
     async function loadEpisodes() {
       const container = document.getElementById('episodesList');
+      
       try {
-        // Cache bypass karne ke liye timestamp add kiya hai
-        const response = await fetch(`${JSON_URL}?_t=${new Date().getTime()}`);
-        if (!response.ok) throw new Error('Data fetch failed');
-        
-        let episodes = await response.json();
+        const episodes = await fetchJSONData();
 
-        if (!Array.isArray(episodes) || episodes.length === 0) {
-          container.innerHTML = '<div class="empty-box">Abhi koi naya episode uplabdh nahi hai.</div>';
+        if (!episodes) {
+          container.innerHTML = `
+            <div class="status-msg">
+              <span style="color: #ef4444; font-weight: bold;">JSON File Nahi Mili!</span><br>
+              Check karein ki file <code>episodes.json</code> name se <b>/flixcinema/bigboss/</b> folder me mojud hai ya nahi.
+            </div>
+          `;
           return;
         }
 
-        // Naye episode ko hamesha pehle (Top) par rakhne ke liye sort karein
-        episodes.sort((a, b) => (b.id || 0) - (a.id || 0));
+        if (episodes.length === 0) {
+          container.innerHTML = '<div class="status-msg">Abhi koi episode add nahi hua hai. Admin panel se episode upload karein.</div>';
+          return;
+        }
+
+        // Latest episode sabse pehle dikhane ke liye sort (Descending order)
+        episodes.sort((a, b) => {
+          const idA = parseInt(a.id) || 0;
+          const idB = parseInt(b.id) || 0;
+          return idB - idA;
+        });
 
         container.innerHTML = episodes.map(ep => {
-          const fileId = ep.file_id || (ep.originalUrl ? ep.originalUrl.split('/').filter(Boolean).pop()) : '';
+          // Pixeldrain ID handle karna
+          let fileId = ep.file_id || '';
+          if (!fileId && (ep.originalUrl || ep.download_url)) {
+            const raw = ep.originalUrl || ep.download_url;
+            fileId = raw.split('/').filter(Boolean).pop();
+          }
+
           const streamUrl = ep.stream_url || `https://pixeldrain.dev/api/file/${fileId}`;
           const downloadUrl = ep.download_url || ep.originalUrl || `https://pixeldrain.dev/u/${fileId}`;
           const poster = ep.poster || DEFAULT_POSTER;
-          const title = ep.title || 'Bigg Boss Episode';
+          const title = ep.title || 'Bigg Boss 20 Episode';
 
-          // Android Universal Video Intent (MX Player, VLC, etc.)
+          // Android Intent for external player
           const intentUrl = `intent:${streamUrl}#Intent;action=android.intent.action.VIEW;type=video/*;end`;
 
           return `
@@ -295,7 +340,7 @@
 
       } catch (err) {
         console.error(err);
-        container.innerHTML = '<div class="empty-box">Episode load karne me dikkat hui. Kripya page refresh karein.</div>';
+        container.innerHTML = '<div class="status-msg" style="color: #ef4444;">Data parse karne me error aaya. Kripya JSON format check karein.</div>';
       }
     }
 
