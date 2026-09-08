@@ -2,7 +2,7 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>FlixCinema Player</title>
 
     <!-- Bootstrap Icons & Google Font -->
@@ -16,7 +16,6 @@
         :root {
             --netflix-red: #e50914;
             --text-white: #ffffff;
-            --overlay-bg: rgba(0, 0, 0, 0.75);
         }
 
         * {
@@ -54,7 +53,7 @@
             background: #000;
         }
 
-        /* Hardware Acceleration Filter for Brightness */
+        /* Brightness Filter Overlay */
         #brightnessOverlay {
             position: absolute;
             top: 0;
@@ -65,7 +64,6 @@
             pointer-events: none;
             opacity: 0;
             z-index: 2;
-            transition: opacity 0.05s ease;
         }
 
         /* Controls Layer */
@@ -79,7 +77,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 24px 32px;
+            padding: 18px 24px;
             background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, transparent 35%, transparent 65%, rgba(0,0,0,0.9) 100%);
             opacity: 1;
             transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -102,7 +100,7 @@
         .video-title-box {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 14px;
             color: var(--text-white);
         }
 
@@ -110,23 +108,24 @@
             background: none;
             border: none;
             color: #fff;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: transform 0.15s ease, color 0.15s ease;
+            padding: 4px 6px;
         }
 
-        .btn-icon:hover {
+        .btn-icon:active {
+            transform: scale(0.9);
             color: var(--netflix-red);
-            transform: scale(1.1);
         }
 
         .video-title {
-            font-size: 1.15rem;
+            font-size: 1rem;
             font-weight: 600;
-            max-width: 50vw;
+            max-width: 45vw;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -135,7 +134,7 @@
         .top-actions {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 12px;
         }
 
         /* Center Playback Controller */
@@ -143,29 +142,29 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 60px;
+            gap: 45px;
         }
 
         .play-pause-btn {
-            width: 72px;
-            height: 72px;
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(10px);
             border: 2px solid rgba(255, 255, 255, 0.3);
-            font-size: 2.5rem;
+            font-size: 2.2rem;
         }
 
         .skip-btn {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             opacity: 0.85;
         }
 
-        /* Bottom Control Panel */
+        /* Bottom Controls */
         .bottom-bar {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
             width: 100%;
         }
 
@@ -173,21 +172,21 @@
         .progress-container {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 10px;
             width: 100%;
         }
 
         .time-display {
             color: #ccc;
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             font-weight: 500;
-            min-width: 55px;
+            min-width: 42px;
         }
 
         .progress-bar-wrapper {
             position: relative;
             flex-grow: 1;
-            height: 6px;
+            height: 5px;
             background: rgba(255, 255, 255, 0.25);
             border-radius: 4px;
             cursor: pointer;
@@ -218,40 +217,41 @@
             top: 50%;
             right: -6px;
             transform: translateY(-50%);
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             background: var(--netflix-red);
             border-radius: 50%;
-            box-shadow: 0 0 10px rgba(229, 9, 20, 0.8);
+            box-shadow: 0 0 8px rgba(229, 9, 20, 0.8);
         }
 
         .bottom-actions {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            width: 100%;
         }
 
         .action-group-right {
             display: flex;
             align-items: center;
-            gap: 24px;
+            gap: 14px;
         }
 
-        /* Gesture Info Indicator (HUD) */
+        /* HUD Indicator for Volume / Brightness */
         .hud-indicator {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0, 0, 0, 0.78);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 16px 28px;
+            padding: 14px 24px;
             border-radius: 12px;
             color: #fff;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             z-index: 20;
             pointer-events: none;
             opacity: 0;
@@ -263,13 +263,13 @@
         }
 
         .hud-icon {
-            font-size: 2.2rem;
+            font-size: 2rem;
             color: var(--netflix-red);
         }
 
         .hud-bar {
-            width: 110px;
-            height: 5px;
+            width: 100px;
+            height: 4px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 4px;
             overflow: hidden;
@@ -281,17 +281,17 @@
             width: 50%;
         }
 
-        /* Netflix Settings Drawer / Popups */
+        /* Settings Drawer / Menus */
         .settings-menu {
             position: absolute;
-            bottom: 85px;
-            right: 32px;
-            width: 280px;
-            max-height: 70vh;
+            bottom: 75px;
+            right: 20px;
+            width: 250px;
+            max-height: 65vh;
             background: rgba(18, 18, 18, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            padding: 12px 0;
+            border-radius: 10px;
+            padding: 8px 0;
             color: #fff;
             z-index: 25;
             display: none;
@@ -300,8 +300,8 @@
         }
 
         .settings-header {
-            padding: 8px 16px;
-            font-size: 0.9rem;
+            padding: 6px 14px;
+            font-size: 0.85rem;
             font-weight: 600;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             color: #aaa;
@@ -311,13 +311,12 @@
         }
 
         .settings-item {
-            padding: 12px 18px;
+            padding: 10px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 0.88rem;
+            font-size: 0.82rem;
             cursor: pointer;
-            transition: background 0.15s;
         }
 
         .settings-item:hover, .settings-item.active {
@@ -325,45 +324,71 @@
             color: var(--netflix-red);
         }
 
-        .settings-item i {
-            font-size: 1.1rem;
-        }
-
-        /* Screen Lock Layer */
+        /* Fixed Screen Lock Button */
         #lockBtnFixed {
             position: absolute;
-            top: 24px;
-            right: 32px;
+            top: 20px;
+            right: 20px;
             z-index: 30;
-            background: rgba(0,0,0,0.6);
-            border: 1px solid rgba(255,255,255,0.2);
-            width: 48px;
-            height: 48px;
+            background: rgba(0,0,0,0.65);
+            border: 1px solid rgba(255,255,255,0.25);
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             display: none;
             align-items: center;
             justify-content: center;
             color: #fff;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             cursor: pointer;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .controls-overlay {
-                padding: 16px 20px;
+        /* Mandatory Mobile Tap-to-Landscape Overlay */
+        #mobileStartOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .play-gate-circle {
+            width: 76px;
+            height: 76px;
+            background: var(--netflix-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 16px;
+            box-shadow: 0 0 25px rgba(229, 9, 20, 0.7);
+        }
+
+        @media (max-width: 600px) {
+            .btn-icon {
+                font-size: 1.3rem;
+                padding: 2px 4px;
             }
-            .center-controls {
-                gap: 35px;
+            .action-group-right {
+                gap: 10px;
             }
-            .play-pause-btn {
-                width: 58px;
-                height: 58px;
-                font-size: 2rem;
+            .time-display {
+                font-size: 0.72rem;
             }
             .video-title {
-                max-width: 60vw;
-                font-size: 1rem;
+                font-size: 0.88rem;
+                max-width: 40vw;
             }
         }
     </style>
@@ -371,6 +396,13 @@
 <body>
 
 <div id="playerContainer">
+    <!-- User Gesture Gate (Mandatory for Auto Landscape & Fullscreen on Android/iOS) -->
+    <div id="mobileStartOverlay" onclick="startPlaybackWithLandscape()">
+        <div class="play-gate-circle"><i class="bi bi-play-fill"></i></div>
+        <h4 style="color:#fff; font-weight:700; margin-bottom: 6px;">Tap to Play</h4>
+        <p style="color:#aaa; font-size: 0.85rem;"><i class="bi bi-phone-landscape me-1"></i> Auto Landscape & Fullscreen Mode</p>
+    </div>
+
     <!-- Main Video Element -->
     <video id="videoPlayer" playsinline preload="auto"></video>
 
@@ -380,21 +412,21 @@
     <!-- HUD (Gestures for Brightness/Volume) -->
     <div class="hud-indicator" id="hudBox">
         <i class="bi bi-volume-up-fill hud-icon" id="hudIcon"></i>
-        <span id="hudValue" style="font-size: 0.9rem; font-weight: 600;">50%</span>
+        <span id="hudValue" style="font-size: 0.88rem; font-weight: 600;">50%</span>
         <div class="hud-bar">
             <div class="hud-bar-fill" id="hudFill"></div>
         </div>
     </div>
 
-    <!-- Lock State Button (Visible only when locked) -->
+    <!-- Lock State Button (Visible only when controls are locked) -->
     <div id="lockBtnFixed" onclick="toggleLock()">
-        <i class="bi bi-lock-fill" id="lockIconFixed"></i>
+        <i class="bi bi-lock-fill"></i>
     </div>
 
     <!-- Player Controls Layer -->
     <div class="controls-overlay" id="controlsOverlay">
         
-        <!-- Top Controls -->
+        <!-- Top Bar -->
         <div class="top-bar">
             <div class="video-title-box">
                 <button class="btn-icon" onclick="goBack()"><i class="bi bi-arrow-left"></i></button>
@@ -403,6 +435,7 @@
             <div class="top-actions">
                 <button class="btn-icon" onclick="toggleLock()" title="Lock Controls"><i class="bi bi-unlock" id="lockIcon"></i></button>
                 <button class="btn-icon" onclick="openMenu('qualityMenu')" title="Quality"><i class="bi bi-gear-wide-connected"></i></button>
+                <button class="btn-icon" onclick="togglePip()" title="Minimize / PiP"><i class="bi bi-pip"></i></button>
             </div>
         </div>
 
@@ -427,22 +460,22 @@
                 <span class="time-display" id="durationText">00:00</span>
             </div>
 
-            <!-- Bottom Action Row -->
+            <!-- Bottom Actions -->
             <div class="bottom-actions">
-                <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2">
                     <button class="btn-icon" onclick="toggleMute()"><i class="bi bi-volume-up-fill" id="volumeIcon"></i></button>
                 </div>
                 <div class="action-group-right">
                     <button class="btn-icon" onclick="openMenu('audioMenu')" title="Audio"><i class="bi bi-soundwave"></i></button>
                     <button class="btn-icon" onclick="openMenu('subtitleMenu')" title="Subtitles"><i class="bi bi-badge-cc"></i></button>
-                    <button class="btn-icon" onclick="openMenu('speedMenu')" title="Playback Speed"><i class="bi bi-speedometer2"></i></button>
-                    <button class="btn-icon" onclick="toggleFullscreen()"><i class="bi bi-fullscreen" id="fsIcon"></i></button>
+                    <button class="btn-icon" onclick="openMenu('speedMenu')" title="Speed"><i class="bi bi-speedometer2"></i></button>
+                    <button class="btn-icon" onclick="toggleFullscreen()" title="Fullscreen Toggle"><i class="bi bi-fullscreen" id="fsIcon"></i></button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Menus (Quality, Audio, Subtitles, Speed) -->
+    <!-- Setting Popups -->
     <div class="settings-menu" id="qualityMenu">
         <div class="settings-header"><span>Video Quality</span><i class="bi bi-x-lg cursor-pointer" onclick="closeAllMenus()"></i></div>
         <div id="qualityList"></div>
@@ -484,40 +517,49 @@
     const hudValue = document.getElementById('hudValue');
     const hudFill = document.getElementById('hudFill');
     const lockBtnFixed = document.getElementById('lockBtnFixed');
+    const startOverlay = document.getElementById('mobileStartOverlay');
 
     let hls = null;
     let hideTimeout = null;
     let isLocked = false;
-    let currentBrightness = 1.0; // 0.2 to 1.0
+    let currentBrightness = 1.0;
     let hudTimeout = null;
 
-    // URL Parameters
     const params = new URLSearchParams(window.location.search);
     const videoUrl = params.get('url');
     const videoTitle = params.get('title') || 'FlixCinema Stream';
 
     document.getElementById('videoTitleDisplay').innerText = videoTitle;
 
-    // 1. Force Fullscreen & Automatic Landscape Lock
+    // 1. Force Fullscreen & Landscape Lock
     async function lockLandscape() {
+        const container = document.getElementById('playerContainer');
         try {
-            if (document.documentElement.requestFullscreen) {
-                await document.documentElement.requestFullscreen();
-            } else if (document.documentElement.webkitRequestFullscreen) {
-                await document.documentElement.webkitRequestFullscreen();
+            if (container.requestFullscreen) {
+                await container.requestFullscreen();
+            } else if (container.webkitRequestFullscreen) {
+                await container.webkitRequestFullscreen();
             }
+        } catch (e) {}
+
+        try {
             if (screen.orientation && screen.orientation.lock) {
                 await screen.orientation.lock('landscape');
             }
-        } catch (e) {
-            // Mobile browser security policy ignore
-        }
+        } catch (e) {}
+    }
+
+    // First User Gesture Start
+    function startPlaybackWithLandscape() {
+        startOverlay.style.display = 'none';
+        lockLandscape();
+        video.play().catch(() => {});
     }
 
     // 2. Setup HLS.js Stream
     function initPlayer() {
         if (!videoUrl) {
-            alert("Video URL nahi mili!");
+            alert("Video link nahi mili!");
             return;
         }
 
@@ -533,26 +575,19 @@
             hls.loadSource(videoUrl);
             hls.attachMedia(video);
 
-            hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
                 buildQualityMenu();
                 buildAudioMenu();
                 buildSubtitleMenu();
-                video.play().catch(() => {});
             });
 
             hls.on(Hls.Events.LEVEL_SWITCHED, () => buildQualityMenu());
             hls.on(Hls.Events.AUDIO_TRACK_SWITCHED, () => buildAudioMenu());
             hls.on(Hls.Events.SUBTITLE_TRACK_SWITCH, () => buildSubtitleMenu());
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            // Safari Native HLS
             video.src = videoUrl;
-            video.addEventListener('loadedmetadata', () => {
-                video.play().catch(() => {});
-            });
         } else {
-            // MP4 / MKV Direct playback
             video.src = videoUrl;
-            video.play().catch(() => {});
         }
     }
 
@@ -595,7 +630,7 @@
     }
 
     document.getElementById('playerContainer').addEventListener('click', (e) => {
-        if (e.target.closest('.controls-overlay') || e.target.closest('.settings-menu') || isLocked) return;
+        if (e.target.closest('.controls-overlay') || e.target.closest('.settings-menu') || isLocked || startOverlay.style.display !== 'none') return;
         if (controlsOverlay.classList.contains('hidden')) {
             showControls();
         } else {
@@ -611,7 +646,6 @@
         currentTimeText.innerText = formatTime(video.currentTime);
         durationText.innerText = formatTime(video.duration);
 
-        // Buffer bar
         if (video.buffered.length > 0) {
             const buffered = (video.buffered.end(video.buffered.length - 1) / video.duration) * 100;
             bufferBar.style.width = `${buffered}%`;
@@ -637,7 +671,7 @@
         return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
     }
 
-    // 5. Brightness & Volume Swipe Gestures
+    // 5. Brightness & Volume Gestures
     let startY = 0;
     let isLeftSwipe = false;
 
@@ -653,12 +687,10 @@
         const change = deltaY / window.innerHeight;
 
         if (isLeftSwipe) {
-            // Brightness (Left screen)
             currentBrightness = Math.min(Math.max(currentBrightness + change * 0.05, 0.1), 1.0);
             brightnessOverlay.style.opacity = (1.0 - currentBrightness).toFixed(2);
             showHUD('bi-sun-fill', Math.round(currentBrightness * 100));
         } else {
-            // Volume (Right screen)
             video.volume = Math.min(Math.max(video.volume + change * 0.05, 0), 1);
             showHUD('bi-volume-up-fill', Math.round(video.volume * 100));
         }
@@ -673,7 +705,7 @@
         hudTimeout = setTimeout(() => hudBox.classList.remove('show'), 1200);
     }
 
-    // 6. Quality, Audio & Subtitles Menu Generators
+    // 6. Quality, Audio, Subtitles & Speed Menus
     function buildQualityMenu() {
         if (!hls) return;
         const list = document.getElementById('qualityList');
@@ -741,7 +773,7 @@
         document.querySelectorAll('.settings-menu').forEach(m => m.style.display = 'none');
     }
 
-    // 7. Lock Screen
+    // 7. Lock Controls Screen
     function toggleLock() {
         isLocked = !isLocked;
         if (isLocked) {
@@ -754,12 +786,37 @@
         }
     }
 
-    // 8. Fullscreen & Navigation
+    // 8. Fullscreen, Minimize / PiP & Mute
     function toggleFullscreen() {
-        if (!document.fullscreenElement) {
-            lockLandscape();
+        const container = document.getElementById('playerContainer');
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+            if (container.requestFullscreen) {
+                container.requestFullscreen();
+            } else if (container.webkitRequestFullscreen) {
+                container.webkitRequestFullscreen();
+            }
+            document.getElementById('fsIcon').className = "bi bi-fullscreen-exit";
         } else {
-            document.exitFullscreen().catch(() => {});
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+            document.getElementById('fsIcon').className = "bi bi-fullscreen";
+        }
+    }
+
+    async function togglePip() {
+        try {
+            if (document.pictureInPictureElement) {
+                await document.exitPictureInPicture();
+            } else if (document.pictureInPictureEnabled && !video.disablePictureInPicture) {
+                await video.requestPictureInPicture();
+            } else {
+                alert("Aapka browser Picture-in-Picture support nahi karta.");
+            }
+        } catch (e) {
+            console.error(e);
         }
     }
 
@@ -774,7 +831,6 @@
 
     window.onload = () => {
         initPlayer();
-        lockLandscape();
     };
 </script>
 
