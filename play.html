@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FlixCinema Player</title>
+
+    <!-- Bootstrap Icons & Google Font -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- HLS.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <style>
+        :root {
+            --netflix-red: #e50914;
+            --text-white: #ffffff;
+            --overlay-bg: rgba(0, 0, 0, 0.75);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            overflow: hidden;
+        }
+
+        /* Player Container */
+        #playerContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+
+        /* Hardware Acceleration Filter for Brightness */
+        #brightnessOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 2;
+            transition: opacity 0.05s ease;
+        }
+
+        /* Controls Layer */
+        .controls-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 24px 32px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, transparent 35%, transparent 65%, rgba(0,0,0,0.9) 100%);
+            opacity: 1;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .controls-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* Top Header */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .video-title-box {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: var(--text-white);
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.6rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s ease, color 0.15s ease;
+        }
+
+        .btn-icon:hover {
+            color: var(--netflix-red);
+            transform: scale(1.1);
+        }
+
+        .video-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            max-width: 50vw;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Center Playback Controller */
+        .center-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 60px;
+        }
+
+        .play-pause-btn {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            font-size: 2.5rem;
+        }
+
+        .skip-btn {
+            font-size: 2.2rem;
+            opacity: 0.85;
+        }
+
+        /* Bottom Control Panel */
+        .bottom-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+        }
+
+        .time-display {
+            color: #ccc;
+            font-size: 0.85rem;
+            font-weight: 500;
+            min-width: 55px;
+        }
+
+        .progress-bar-wrapper {
+            position: relative;
+            flex-grow: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .progress-bar-buffer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 4px;
+            width: 0%;
+        }
+
+        .progress-bar-current {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: var(--netflix-red);
+            border-radius: 4px;
+            width: 0%;
+        }
+
+        .progress-scrubber {
+            position: absolute;
+            top: 50%;
+            right: -6px;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            background: var(--netflix-red);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(229, 9, 20, 0.8);
+        }
+
+        .bottom-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .action-group-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        /* Gesture Info Indicator (HUD) */
+        .hud-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 16px 28px;
+            border-radius: 12px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            z-index: 20;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .hud-indicator.show {
+            opacity: 1;
+        }
+
+        .hud-icon {
+            font-size: 2.2rem;
+            color: var(--netflix-red);
+        }
+
+        .hud-bar {
+            width: 110px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .hud-bar-fill {
+            height: 100%;
+            background: var(--netflix-red);
+            width: 50%;
+        }
+
+        /* Netflix Settings Drawer / Popups */
+        .settings-menu {
+            position: absolute;
+            bottom: 85px;
+            right: 32px;
+            width: 280px;
+            max-height: 70vh;
+            background: rgba(18, 18, 18, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 12px 0;
+            color: #fff;
+            z-index: 25;
+            display: none;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.85);
+        }
+
+        .settings-header {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .settings-item {
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .settings-item:hover, .settings-item.active {
+            background: rgba(229, 9, 20, 0.15);
+            color: var(--netflix-red);
+        }
+
+        .settings-item i {
+            font-size: 1.1rem;
+        }
+
+        /* Screen Lock Layer */
+        #lockBtnFixed {
+            position: absolute;
+            top: 24px;
+            right: 32px;
+            z-index: 30;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.2);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.3rem;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .controls-overlay {
+                padding: 16px 20px;
+            }
+            .center-controls {
+                gap: 35px;
+            }
+            .play-pause-btn {
+                width: 58px;
+                height: 58px;
+                font-size: 2rem;
+            }
+            .video-title {
+                max-width: 60vw;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="playerContainer">
+    <!-- Main Video Element -->
+    <video id="videoPlayer" playsinline preload="auto"></video>
+
+    <!-- Brightness Overlay -->
+    <div id="brightnessOverlay"></div>
+
+    <!-- HUD (Gestures for Brightness/Volume) -->
+    <div class="hud-indicator" id="hudBox">
+        <i class="bi bi-volume-up-fill hud-icon" id="hudIcon"></i>
+        <span id="hudValue" style="font-size: 0.9rem; font-weight: 600;">50%</span>
+        <div class="hud-bar">
+            <div class="hud-bar-fill" id="hudFill"></div>
+        </div>
+    </div>
+
+    <!-- Lock State Button (Visible only when locked) -->
+    <div id="lockBtnFixed" onclick="toggleLock()">
+        <i class="bi bi-lock-fill" id="lockIconFixed"></i>
+    </div>
+
+    <!-- Player Controls Layer -->
+    <div class="controls-overlay" id="controlsOverlay">
+        
+        <!-- Top Controls -->
+        <div class="top-bar">
+            <div class="video-title-box">
+                <button class="btn-icon" onclick="goBack()"><i class="bi bi-arrow-left"></i></button>
+                <div class="video-title" id="videoTitleDisplay">FlixCinema Stream</div>
+            </div>
+            <div class="top-actions">
+                <button class="btn-icon" onclick="toggleLock()" title="Lock Controls"><i class="bi bi-unlock" id="lockIcon"></i></button>
+                <button class="btn-icon" onclick="openMenu('qualityMenu')" title="Quality"><i class="bi bi-gear-wide-connected"></i></button>
+            </div>
+        </div>
+
+        <!-- Center Controls -->
+        <div class="center-controls">
+            <button class="btn-icon skip-btn" onclick="seek(-10)"><i class="bi bi-arrow-counterclockwise"></i></button>
+            <button class="btn-icon play-pause-btn" id="mainPlayBtn" onclick="togglePlay()"><i class="bi bi-play-fill" id="playIcon"></i></button>
+            <button class="btn-icon skip-btn" onclick="seek(10)"><i class="bi bi-arrow-clockwise"></i></button>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="bottom-bar">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <span class="time-display" id="currentTimeText">00:00</span>
+                <div class="progress-bar-wrapper" id="progressWrapper">
+                    <div class="progress-bar-buffer" id="bufferBar"></div>
+                    <div class="progress-bar-current" id="progressBar">
+                        <div class="progress-scrubber"></div>
+                    </div>
+                </div>
+                <span class="time-display" id="durationText">00:00</span>
+            </div>
+
+            <!-- Bottom Action Row -->
+            <div class="bottom-actions">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn-icon" onclick="toggleMute()"><i class="bi bi-volume-up-fill" id="volumeIcon"></i></button>
+                </div>
+                <div class="action-group-right">
+                    <button class="btn-icon" onclick="openMenu('audioMenu')" title="Audio"><i class="bi bi-soundwave"></i></button>
+                    <button class="btn-icon" onclick="openMenu('subtitleMenu')" title="Subtitles"><i class="bi bi-badge-cc"></i></button>
+                    <button class="btn-icon" onclick="openMenu('speedMenu')" title="Playback Speed"><i class="bi bi-speedometer2"></i></button>
+                    <button class="btn-icon" onclick="toggleFullscreen()"><i class="bi bi-fullscreen" id="fsIcon"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menus (Quality, Audio, Subtitles, Speed) -->
+    <div class="settings-menu" id="qualityMenu">
+        <div class="settings-header"><span>Video Quality</span><i class="bi bi-x-lg cursor-pointer" onclick="closeAllMenus()"></i></div>
+        <div id="qualityList"></div>
+    </div>
+
+    <div class="settings-menu" id="audioMenu">
+        <div class="settings-header"><span>Audio Tracks</span><i class="bi bi-x-lg cursor-pointer" onclick="closeAllMenus()"></i></div>
+        <div id="audioList"></div>
+    </div>
+
+    <div class="settings-menu" id="subtitleMenu">
+        <div class="settings-header"><span>Subtitles</span><i class="bi bi-x-lg cursor-pointer" onclick="closeAllMenus()"></i></div>
+        <div id="subtitleList"></div>
+    </div>
+
+    <div class="settings-menu" id="speedMenu">
+        <div class="settings-header"><span>Playback Speed</span><i class="bi bi-x-lg cursor-pointer" onclick="closeAllMenus()"></i></div>
+        <div class="settings-item" onclick="setSpeed(0.5)">0.5x</div>
+        <div class="settings-item" onclick="setSpeed(0.75)">0.75x</div>
+        <div class="settings-item active" onclick="setSpeed(1.0)">Normal (1.0x)</div>
+        <div class="settings-item" onclick="setSpeed(1.25)">1.25x</div>
+        <div class="settings-item" onclick="setSpeed(1.5)">1.5x</div>
+        <div class="settings-item" onclick="setSpeed(2.0)">2.0x</div>
+    </div>
+</div>
+
+<script>
+    const video = document.getElementById('videoPlayer');
+    const controlsOverlay = document.getElementById('controlsOverlay');
+    const playIcon = document.getElementById('playIcon');
+    const progressBar = document.getElementById('progressBar');
+    const bufferBar = document.getElementById('bufferBar');
+    const progressWrapper = document.getElementById('progressWrapper');
+    const currentTimeText = document.getElementById('currentTimeText');
+    const durationText = document.getElementById('durationText');
+    const brightnessOverlay = document.getElementById('brightnessOverlay');
+    const hudBox = document.getElementById('hudBox');
+    const hudIcon = document.getElementById('hudIcon');
+    const hudValue = document.getElementById('hudValue');
+    const hudFill = document.getElementById('hudFill');
+    const lockBtnFixed = document.getElementById('lockBtnFixed');
+
+    let hls = null;
+    let hideTimeout = null;
+    let isLocked = false;
+    let currentBrightness = 1.0; // 0.2 to 1.0
+    let hudTimeout = null;
+
+    // URL Parameters
+    const params = new URLSearchParams(window.location.search);
+    const videoUrl = params.get('url');
+    const videoTitle = params.get('title') || 'FlixCinema Stream';
+
+    document.getElementById('videoTitleDisplay').innerText = videoTitle;
+
+    // 1. Force Fullscreen & Automatic Landscape Lock
+    async function lockLandscape() {
+        try {
+            if (document.documentElement.requestFullscreen) {
+                await document.documentElement.requestFullscreen();
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                await document.documentElement.webkitRequestFullscreen();
+            }
+            if (screen.orientation && screen.orientation.lock) {
+                await screen.orientation.lock('landscape');
+            }
+        } catch (e) {
+            // Mobile browser security policy ignore
+        }
+    }
+
+    // 2. Setup HLS.js Stream
+    function initPlayer() {
+        if (!videoUrl) {
+            alert("Video URL nahi mili!");
+            return;
+        }
+
+        const isHls = videoUrl.includes('.m3u8') || videoUrl.includes('.t') || videoUrl.includes('.ts');
+
+        if (isHls && Hls.isSupported()) {
+            hls = new Hls({
+                enableWorker: true,
+                lowLatencyMode: true,
+                backBufferLength: 60
+            });
+
+            hls.loadSource(videoUrl);
+            hls.attachMedia(video);
+
+            hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+                buildQualityMenu();
+                buildAudioMenu();
+                buildSubtitleMenu();
+                video.play().catch(() => {});
+            });
+
+            hls.on(Hls.Events.LEVEL_SWITCHED, () => buildQualityMenu());
+            hls.on(Hls.Events.AUDIO_TRACK_SWITCHED, () => buildAudioMenu());
+            hls.on(Hls.Events.SUBTITLE_TRACK_SWITCH, () => buildSubtitleMenu());
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            // Safari Native HLS
+            video.src = videoUrl;
+            video.addEventListener('loadedmetadata', () => {
+                video.play().catch(() => {});
+            });
+        } else {
+            // MP4 / MKV Direct playback
+            video.src = videoUrl;
+            video.play().catch(() => {});
+        }
+    }
+
+    // 3. Play / Pause & Controls Visibility
+    function togglePlay() {
+        if (video.paused) {
+            video.play();
+            lockLandscape();
+        } else {
+            video.pause();
+        }
+    }
+
+    video.addEventListener('play', () => {
+        playIcon.className = "bi bi-pause-fill";
+        startInactivityTimer();
+    });
+
+    video.addEventListener('pause', () => {
+        playIcon.className = "bi bi-play-fill";
+        showControls();
+    });
+
+    function showControls() {
+        if (isLocked) return;
+        controlsOverlay.classList.remove('hidden');
+        startInactivityTimer();
+    }
+
+    function hideControls() {
+        if (!video.paused) {
+            controlsOverlay.classList.add('hidden');
+            closeAllMenus();
+        }
+    }
+
+    function startInactivityTimer() {
+        clearTimeout(hideTimeout);
+        hideTimeout = setTimeout(hideControls, 3500);
+    }
+
+    document.getElementById('playerContainer').addEventListener('click', (e) => {
+        if (e.target.closest('.controls-overlay') || e.target.closest('.settings-menu') || isLocked) return;
+        if (controlsOverlay.classList.contains('hidden')) {
+            showControls();
+        } else {
+            hideControls();
+        }
+    });
+
+    // 4. Progress Tracking & Seeking
+    video.addEventListener('timeupdate', () => {
+        if (!video.duration) return;
+        const percent = (video.currentTime / video.duration) * 100;
+        progressBar.style.width = `${percent}%`;
+        currentTimeText.innerText = formatTime(video.currentTime);
+        durationText.innerText = formatTime(video.duration);
+
+        // Buffer bar
+        if (video.buffered.length > 0) {
+            const buffered = (video.buffered.end(video.buffered.length - 1) / video.duration) * 100;
+            bufferBar.style.width = `${buffered}%`;
+        }
+    });
+
+    progressWrapper.addEventListener('click', (e) => {
+        const rect = progressWrapper.getBoundingClientRect();
+        const pos = (e.clientX - rect.left) / rect.width;
+        video.currentTime = pos * video.duration;
+        startInactivityTimer();
+    });
+
+    function seek(sec) {
+        video.currentTime = Math.min(Math.max(video.currentTime + sec, 0), video.duration);
+        showControls();
+    }
+
+    function formatTime(sec) {
+        if (isNaN(sec)) return "00:00";
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    // 5. Brightness & Volume Swipe Gestures
+    let startY = 0;
+    let isLeftSwipe = false;
+
+    document.getElementById('playerContainer').addEventListener('touchstart', (e) => {
+        if (isLocked || e.touches.length > 1) return;
+        startY = e.touches[0].clientY;
+        isLeftSwipe = e.touches[0].clientX < window.innerWidth / 2;
+    });
+
+    document.getElementById('playerContainer').addEventListener('touchmove', (e) => {
+        if (isLocked || e.touches.length > 1) return;
+        const deltaY = startY - e.touches[0].clientY;
+        const change = deltaY / window.innerHeight;
+
+        if (isLeftSwipe) {
+            // Brightness (Left screen)
+            currentBrightness = Math.min(Math.max(currentBrightness + change * 0.05, 0.1), 1.0);
+            brightnessOverlay.style.opacity = (1.0 - currentBrightness).toFixed(2);
+            showHUD('bi-sun-fill', Math.round(currentBrightness * 100));
+        } else {
+            // Volume (Right screen)
+            video.volume = Math.min(Math.max(video.volume + change * 0.05, 0), 1);
+            showHUD('bi-volume-up-fill', Math.round(video.volume * 100));
+        }
+    });
+
+    function showHUD(icon, value) {
+        hudIcon.className = `bi ${icon} hud-icon`;
+        hudValue.innerText = `${value}%`;
+        hudFill.style.width = `${value}%`;
+        hudBox.classList.add('show');
+        clearTimeout(hudTimeout);
+        hudTimeout = setTimeout(() => hudBox.classList.remove('show'), 1200);
+    }
+
+    // 6. Quality, Audio & Subtitles Menu Generators
+    function buildQualityMenu() {
+        if (!hls) return;
+        const list = document.getElementById('qualityList');
+        list.innerHTML = `<div class="settings-item ${hls.autoLevelEnabled ? 'active' : ''}" onclick="setQuality(-1)">Auto</div>`;
+
+        hls.levels.forEach((lvl, idx) => {
+            const isSelected = !hls.autoLevelEnabled && hls.currentLevel === idx;
+            list.innerHTML += `<div class="settings-item ${isSelected ? 'active' : ''}" onclick="setQuality(${idx})">${lvl.height}p</div>`;
+        });
+    }
+
+    function setQuality(level) {
+        if (!hls) return;
+        hls.currentLevel = level;
+        closeAllMenus();
+    }
+
+    function buildAudioMenu() {
+        if (!hls) return;
+        const list = document.getElementById('audioList');
+        list.innerHTML = '';
+        if (hls.audioTracks.length === 0) {
+            list.innerHTML = '<div class="settings-item">Default Audio</div>';
+            return;
+        }
+        hls.audioTracks.forEach((track, idx) => {
+            const isSelected = hls.audioTrack === idx;
+            list.innerHTML += `<div class="settings-item ${isSelected ? 'active' : ''}" onclick="setAudio(${idx})">${track.name || `Audio ${idx + 1}`}</div>`;
+        });
+    }
+
+    function setAudio(idx) {
+        if (!hls) return;
+        hls.audioTrack = idx;
+        closeAllMenus();
+    }
+
+    function buildSubtitleMenu() {
+        if (!hls) return;
+        const list = document.getElementById('subtitleList');
+        list.innerHTML = `<div class="settings-item ${hls.subtitleTrack === -1 ? 'active' : ''}" onclick="setSubtitle(-1)">Off</div>`;
+        hls.subtitleTracks.forEach((sub, idx) => {
+            const isSelected = hls.subtitleTrack === idx;
+            list.innerHTML += `<div class="settings-item ${isSelected ? 'active' : ''}" onclick="setSubtitle(${idx})">${sub.name || `Sub ${idx + 1}`}</div>`;
+        });
+    }
+
+    function setSubtitle(idx) {
+        if (!hls) return;
+        hls.subtitleTrack = idx;
+        closeAllMenus();
+    }
+
+    function setSpeed(rate) {
+        video.playbackRate = rate;
+        closeAllMenus();
+    }
+
+    function openMenu(menuId) {
+        closeAllMenus();
+        document.getElementById(menuId).style.display = 'block';
+    }
+
+    function closeAllMenus() {
+        document.querySelectorAll('.settings-menu').forEach(m => m.style.display = 'none');
+    }
+
+    // 7. Lock Screen
+    function toggleLock() {
+        isLocked = !isLocked;
+        if (isLocked) {
+            controlsOverlay.classList.add('hidden');
+            lockBtnFixed.style.display = 'flex';
+        } else {
+            lockBtnFixed.style.display = 'none';
+            controlsOverlay.classList.remove('hidden');
+            startInactivityTimer();
+        }
+    }
+
+    // 8. Fullscreen & Navigation
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            lockLandscape();
+        } else {
+            document.exitFullscreen().catch(() => {});
+        }
+    }
+
+    function toggleMute() {
+        video.muted = !video.muted;
+        document.getElementById('volumeIcon').className = video.muted ? "bi bi-volume-mute-fill" : "bi bi-volume-up-fill";
+    }
+
+    function goBack() {
+        window.history.back();
+    }
+
+    window.onload = () => {
+        initPlayer();
+        lockLandscape();
+    };
+</script>
+
+</body>
+</html>
