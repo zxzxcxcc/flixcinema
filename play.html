@@ -51,6 +51,12 @@
             height: 100%;
             object-fit: contain;
             background: #000;
+            transition: object-fit 0.2s ease;
+        }
+
+        /* Full Screen Fill/Cover mode on double tap */
+        video.fill-screen {
+            object-fit: cover !important;
         }
 
         /* Brightness Filter Overlay */
@@ -343,7 +349,7 @@
             cursor: pointer;
         }
 
-        /* Mandatory Mobile Tap-to-Landscape Overlay */
+        /* Mobile-Only Tap Overlay */
         #mobileStartOverlay {
             position: absolute;
             top: 0;
@@ -359,6 +365,13 @@
             cursor: pointer;
             text-align: center;
             padding: 20px;
+        }
+
+        /* PC / Laptop screen pe Tap Overlay bilkul hide rahega */
+        @media (min-width: 992px) {
+            #mobileStartOverlay {
+                display: none !important;
+            }
         }
 
         .play-gate-circle {
@@ -396,7 +409,7 @@
 <body>
 
 <div id="playerContainer">
-    <!-- User Gesture Gate (Mandatory for Auto Landscape & Fullscreen on Android/iOS) -->
+    <!-- User Gesture Gate: Sirf mobile par trigger hoga -->
     <div id="mobileStartOverlay" onclick="startPlaybackWithLandscape()">
         <div class="play-gate-circle"><i class="bi bi-play-fill"></i></div>
         <h4 style="color:#fff; font-weight:700; margin-bottom: 6px;">Tap to Play</h4>
@@ -409,11 +422,11 @@
     <!-- Brightness Overlay -->
     <div id="brightnessOverlay"></div>
 
-    <!-- HUD (Gestures for Brightness/Volume) -->
+    <!-- HUD (Gestures for Brightness/Volume/Resize) -->
     <div class="hud-indicator" id="hudBox">
         <i class="bi bi-volume-up-fill hud-icon" id="hudIcon"></i>
         <span id="hudValue" style="font-size: 0.88rem; font-weight: 600;">50%</span>
-        <div class="hud-bar">
+        <div class="hud-bar" id="hudBarContainer">
             <div class="hud-bar-fill" id="hudFill"></div>
         </div>
     </div>
@@ -516,6 +529,7 @@
     const hudIcon = document.getElementById('hudIcon');
     const hudValue = document.getElementById('hudValue');
     const hudFill = document.getElementById('hudFill');
+    const hudBarContainer = document.getElementById('hudBarContainer');
     const lockBtnFixed = document.getElementById('lockBtnFixed');
     const startOverlay = document.getElementById('mobileStartOverlay');
 
@@ -524,6 +538,9 @@
     let isLocked = false;
     let currentBrightness = 1.0;
     let hudTimeout = null;
+    let lastTapTime = 0;
+
+    const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 992;
 
     const params = new URLSearchParams(window.location.search);
     const videoUrl = params.get('url');
@@ -549,9 +566,9 @@
         } catch (e) {}
     }
 
-    // First User Gesture Start
+    // First User Gesture Start (Sirf Mobile)
     function startPlaybackWithLandscape() {
-        startOverlay.style.display = 'none';
+        if (startOverlay) startOverlay.style.display = 'none';
         lockLandscape();
         video.play().catch(() => {});
     }
@@ -561,6 +578,11 @@
         if (!videoUrl) {
             alert("Video link nahi mili!");
             return;
+        }
+
+        // Agar PC/Desktop hai toh overlay turant hata kar autoplay initiate karein
+        if (!isMobileDevice && startOverlay) {
+            startOverlay.style.display = 'none';
         }
 
         const isHls = videoUrl.includes('.m3u8') || videoUrl.includes('.t') || videoUrl.includes('.ts');
@@ -579,6 +601,9 @@
                 buildQualityMenu();
                 buildAudioMenu();
                 buildSubtitleMenu();
+                if (!isMobileDevice) {
+                    video.play().catch(() => {});
+                }
             });
 
             hls.on(Hls.Events.LEVEL_SWITCHED, () => buildQualityMenu());
@@ -586,8 +611,10 @@
             hls.on(Hls.Events.SUBTITLE_TRACK_SWITCH, () => buildSubtitleMenu());
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = videoUrl;
+            if (!isMobileDevice) video.play().catch(() => {});
         } else {
             video.src = videoUrl;
+            if (!isMobileDevice) video.play().catch(() => {});
         }
     }
 
@@ -595,7 +622,7 @@
     function togglePlay() {
         if (video.paused) {
             video.play();
-            lockLandscape();
+            if (isMobileDevice) lockLandscape();
         } else {
             video.pause();
         }
@@ -629,13 +656,37 @@
         hideTimeout = setTimeout(hideControls, 3500);
     }
 
-    document.getElementById('playerContainer').addEventListener('click', (e) => {
-        if (e.target.closest('.controls-overlay') || e.target.closest('.settings-menu') || isLocked || startOverlay.style.display !== 'none') return;
-        if (controlsOverlay.classList.contains('hidden')) {
-            showControls();
+    // Double Tap / Double Click handler for Fullscreen & Video Aspect Stretch/Fit
+    function handleDoubleTapToggle() {
+        const isCover = video.classList.toggle('fill-screen');
+        if (isCover) {
+            showSimpleHUD('bi-arrows-angle-expand', 'Zoom Fill');
         } else {
-            hideControls();
+            showSimpleHUD('bi-arrows-angle-contract', 'Original Fit');
         }
+        toggleFullscreen();
+    }
+
+    // Screen Click / Tap Listener with Single Tap vs Double Tap Detection
+    document.getElementById('playerContainer').addEventListener('click', (e) => {
+        if (e.target.closest('.controls-overlay') || e.target.closest('.settings-menu') || isLocked) return;
+        if (startOverlay && startOverlay.style.display !== 'none' && isMobileDevice) return;
+
+        const currentTime = new Date().getTime();
+        const tapGap = currentTime - lastTapTime;
+
+        if (tapGap < 300 && tapGap > 0) {
+            // Double Tap Detected
+            handleDoubleTapToggle();
+        } else {
+            // Single Tap
+            if (controlsOverlay.classList.contains('hidden')) {
+                showControls();
+            } else {
+                hideControls();
+            }
+        }
+        lastTapTime = currentTime;
     });
 
     // 4. Progress Tracking & Seeking
@@ -697,12 +748,22 @@
     });
 
     function showHUD(icon, value) {
+        hudBarContainer.style.display = 'block';
         hudIcon.className = `bi ${icon} hud-icon`;
         hudValue.innerText = `${value}%`;
         hudFill.style.width = `${value}%`;
         hudBox.classList.add('show');
         clearTimeout(hudTimeout);
         hudTimeout = setTimeout(() => hudBox.classList.remove('show'), 1200);
+    }
+
+    function showSimpleHUD(icon, text) {
+        hudBarContainer.style.display = 'none';
+        hudIcon.className = `bi ${icon} hud-icon`;
+        hudValue.innerText = text;
+        hudBox.classList.add('show');
+        clearTimeout(hudTimeout);
+        hudTimeout = setTimeout(() => hudBox.classList.remove('show'), 1000);
     }
 
     // 6. Quality, Audio, Subtitles & Speed Menus
