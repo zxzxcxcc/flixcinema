@@ -975,9 +975,14 @@
                 const dLink = getDownloadableUrl(ep.link);
                 const hideDownload = isStreamingHlsOrT(ep.link);
                 
-                // Check if link is .zip or .rar
+                // Link, Episode Title aur Series Title sab ko check karein
                 const cleanEpLink = (ep.link || '').toLowerCase().split('?')[0].trim();
-                const isArchive = cleanEpLink.endsWith('.zip') || cleanEpLink.endsWith('.rar');
+                const epTitleText = (ep.title || '').toLowerCase();
+                const seriesTitleText = (currentSeries.title || '').toLowerCase();
+                
+                // Check for zip, rar, or pack text in link/titles
+                const isPackText = (t) => t.includes('complete pack') || t.includes('full season pack') || t.includes('zip pack') || t.includes('season pack');
+                const isArchive = cleanEpLink.endsWith('.zip') || cleanEpLink.endsWith('.rar') || isPackText(epTitleText) || isPackText(seriesTitleText) || cleanEpLink.includes('.zip') || cleanEpLink.includes('.rar');
 
                 let btnHtml = '';
                 if (isArchive) {
