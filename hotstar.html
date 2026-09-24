@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MaxMentor Live Sports & Channels</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #0a0d14;
+      --card-bg: rgba(255, 255, 255, 0.04);
+      --card-hover-bg: rgba(255, 255, 255, 0.08);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --accent: #38bdf8;
+      --primary: #4f46e5;
+      --primary-gradient: linear-gradient(135deg, #6366f1 0%, #06b6d4 100%);
+      --tg-color: #229ed9;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Glows */
+    .glow-bg {
+      position: fixed;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      filter: blur(140px);
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.25;
+    }
+    .glow-1 { top: -80px; left: -100px; background: #6366f1; }
+    .glow-2 { bottom: -80px; right: -100px; background: #06b6d4; }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      background: rgba(10, 13, 20, 0.85);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .brand-logo {
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-decoration: none;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .live-dot {
+      width: 10px;
+      height: 10px;
+      background-color: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tg-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--tg-color);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 15px rgba(34, 158, 217, 0.25);
+    }
+
+    .tg-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(34, 158, 217, 0.4);
+    }
+
+    /* Top Banner / Search Section */
+    .hero-strip {
+      padding: 30px 6% 15px;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 5px 14px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: var(--accent);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      letter-spacing: 0.3px;
+    }
+
+    .hero-strip h1 {
+      font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .hero-strip p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 25px;
+    }
+
+    .search-wrapper {
+      position: relative;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .search-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 13px 20px 13px 44px;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* Channel Grid */
+    .channel-section {
+      padding: 20px 6% 60px;
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      flex: 1;
+    }
+
+    .channel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 540px) {
+      .channel-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+    }
+
+    .channel-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .channel-card:hover {
+      transform: translateY(-4px);
+      background: var(--card-hover-bg);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .thumb-holder {
+      height: 125px;
+      background: rgba(0, 0, 0, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+
+    .thumb-holder img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
+      transition: transform 0.25s ease;
+    }
+
+    .channel-card:hover .thumb-holder img {
+      transform: scale(1.08);
+    }
+
+    .channel-info {
+      padding: 12px 10px;
+      background: rgba(0, 0, 0, 0.2);
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .channel-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .channel-status {
+      font-size: 0.72rem;
+      color: #34d399;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    /* Modal / Notice Popup */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 15, 0.85);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      background: #111726;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      max-width: 440px;
+      width: 100%;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+      position: relative;
+      transform: scale(0.92);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: #aaa;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .close-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .modal-icon-badge {
+      width: 60px;
+      height: 60px;
+      background: rgba(79, 70, 229, 0.15);
+      color: #818cf8;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .modal-card h2 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .no-sub-pill {
+      display: inline-block;
+      background: rgba(52, 211, 153, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      color: #34d399;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+
+    .modal-notice-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: left;
+      margin-bottom: 22px;
+    }
+
+    .modal-notice-box p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .modal-notice-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .notice-highlight {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-continue {
+      background: var(--primary-gradient);
+      border: none;
+      color: #fff;
+      padding: 13px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .btn-continue:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    .btn-tg-join {
+      background: rgba(34, 158, 217, 0.15);
+      border: 1px solid rgba(34, 158, 217, 0.3);
+      color: var(--tg-color);
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.92rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-tg-join:hover {
+      background: rgba(34, 158, 217, 0.25);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 20px 6%;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      background: rgba(10, 13, 20, 0.6);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Ambient Glows -->
+  <div class="glow-bg glow-1"></div>
+  <div class="glow-bg glow-2"></div>
+
+  <!-- Header -->
+  <header>
+    <a href="#" class="brand-logo">
+      <span class="live-dot"></span>
+      MaxMentor Live
+    </a>
+
+    <div class="header-actions">
+      <a href="https://t.me/maxmentor" target="_blank" rel="noopener noreferrer" class="tg-btn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.52 2.77-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+        </svg>
+        Telegram
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero & Search -->
+  <div class="hero-strip">
+    <div class="hero-badge">100% Free Live Streaming Hub</div>
+    <h1>Watch High Quality Sports Live</h1>
+    <p>Direct live streams with zero subscription charges. Powered by MaxMentor.</p>
+    
+    <div class="search-wrapper">
+      <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" id="channelSearch" class="search-input" placeholder="Search your channel (e.g. Hindi, Tamil, Telugu)...">
+    </div>
+  </div>
+
+  <!-- Channel Grid -->
+  <main class="channel-section">
+    <div class="channel-grid" id="channelList">
+
+      <!-- Channel Cards -->
+      <a href="https://hotstar.com/1260000035" target="_blank" class="channel-card">
+        <div class="thumb-holder">
+          <img src="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-8301-j7hc0820-v1/imageContent-8301-j7hc0820-m1.png" alt="Star Sports 1 HD" loading="lazy">
+        </div>
+        <div class="channel-info">
+          <span class="channel-name">Star Sports 1 HD</span>
+          <span class="channel-status">&#9679; 1080p Live</span>
+        </div>
+      </a>
+
+      <a href="https://hotstar.com/1260000033" target="_blank" class="channel-card">
+        <div class="thumb-holder">
+          <img src="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-1021-j5nj3c68-v1/imageContent-1021-j5nj3c68-m1.png" alt="Star Sports 2 HD" loading="lazy">
+        </div>
+        <div class="channel-info">
+          <span class="channel-name">Star Sports 2 HD</span>
+          <span class="channel-status">&#9679; 1080p Live</span>
+        </div>
+      </a>
+
+      <a href="https://www.hotstar.com/1540068301" target="_blank" class="channel-card">
+        <div class="thumb-holder">
+          <img src="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-31405-jm2isen4-v1/imageContent-31405-jm2isen4-m1.png" alt="Star Sports 3" loading="lazy">
+        </div>
+        <div class="channel-info">
+          <span class="channel-name">Star Sports 3</span>
+          <span class="channel-status">&#9679; Live</span>
+        </div>
+      </a>
+
+      <a href="https://hotstar.com/1260000025" target="_blank" class="channel-card">
+        <div class="thumb-holder">
+          <img src="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-60-j5fdr6a0-v1/imageContent-60-j5fdr6a0-m1.png" alt="Star Sports 1 Hindi HD" loading="lazy">
+        </div>
+        <div class="channel-info">
+          <span class="channel-name">Star Sports 1 Hindi HD</span>
+          <span class="channel-status">&#9679; 1080p Live</span>
+        </div>
+      </a>
+
+      <a href="https://hotstar.com/1271407200" target="_blank" class="channel-card">
+        <div class="thumb-holder">
+          <img src="https://dvdh7g0f0hwck.cloudfront.net/assets/images/channel/StarSports2HindiHD_Thumbnail_756e8975-e3d1-4252-b8a0-96d9579233e2.png" alt="Star Sports 2 Hindi HD" loading="lazy">
+        </div>
+        <div class="channel-info">
+          <span class="channel-name">Star Sports 2 Hindi HD</span>
+          <span class="channel-status">&#9679; 1080p Live</span>
+        </div>
+      </a>
+
+      <a href="https://hotstar.com/1260000034" target="_blank" class="channel-card">
+        <div class="thumb-holder">
+          <img src="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-7891-j75vq7k0-v1/imageContent-7891-j75vq7k0-m1.PNG" alt="Star Sports Select 1 HD" loading="lazy">
+        </div>
+        <div class="channel-info">
+          <span class="channel-name">Star Sports Select 1 HD</span>
+          <span class="channel-status">&#9679; 1080p Live</span>
+        </div>
+      </a>
+
+      <a href="https://hotstar.com/1260000024" target="_blank" class="channel-card">
+        <div class="thumb-holder">
+          <img src="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11791-j9kyqpy8-v1/imageContent-11791-j9kyqpy8-m1.png" alt="Star Sports Select 2 HD" loading="lazy">
+        </div>
+        <div class="channel-info">
+          <span class="channel-name">Star Sports Select 2 HD</span>
+          <span class="channel-status">&#9679; 1080p Live</span>
+        </div>
+      </a>
+
+      <a href="https://www.hotstar.com/1540068334" target="_blank" class="channel-card">
+        <div class="thumb-holder">
+          <img src="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/SS1TAMHD_Thumbnail-v1/SS1TAMHD_Thumbnail.png" alt="Star Sports 1 Tamil HD" loading="lazy">
+        </div>
+        <div class="channel-info">
+          <span class="channel-name">Star Sports 1 Tamil HD</span>
+          <span class="channel-status">&#9679; 1080p Live</span>
+        </div>
+      </a>
+
+      <a href="https://hotstar.com/1271407106" target="_blank" class="channel-card">
+        <div class="thumb-holder">
+          <img src="https://dvdh7g0f0hwck.cloudfront.net/assets/images/channel/StarSports2TamilHD_Thumbnail_fe38a9b6-f525-4765-a5c6-78976aeb340c.png" alt="Star Sports 2 Tamil HD" loading="lazy">
+        </div>
+        <div class="channel-info">
+          <span class="channel-name">Star Sports 2 Tamil HD</span>
+          <span class="channel-status">&#9679; 1080p Live</span>
+        </div>
+      </a>
+
+      <a href="https://www.hotstar.com/1540068280" target="_blank" class="channel-card">
+        <div class="thumb-holder">
+          <img src="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/SS1TELHD_Thumbnail-v2/SS1TELHD_Thumbnail.png" alt="Star Sports 1 Telugu HD" loading="lazy">
+        </div>
+        <div class="channel-info">
+          <span class="channel-name">Star Sports 1 Telugu HD</span>
+          <span class="channel-status">&#9679; 1080p Live</span>
+        </div>
+      </a>
+
+      <a href="https://hotstar.com/1271407108" target="_blank" class="channel-card">
+        <div class="thumb-holder">
+          <img src="https://dvdh7g0f0hwck.cloudfront.net/assets/images/channel/StarSports2TeluguHD_Thumbnail_0b6daeb0-9afa-40f8-9f5d-9c6c99823e12.png" alt="Star Sports 2 Telugu HD" loading="lazy">
+        </div>
+        <div class="channel-info">
+          <span class="channel-name">Star Sports 2 Telugu HD</span>
+          <span class="channel-status">&#9679; 1080p Live</span>
+        </div>
+      </a>
+
+      <a href="https://www.hotstar.com/1540068322" target="_blank" class="channel-card">
+        <div class="thumb-holder">
+          <img src="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-34856-jq8vbjug-v1/imageContent-34856-jq8vbjug-m1.png" alt="Star Sports 1 Kannada" loading="lazy">
+        </div>
+        <div class="channel-info">
+          <span class="channel-name">Star Sports 1 Kannada</span>
+          <span class="channel-status">&#9679; Live</span>
+        </div>
+      </a>
+
+      <a href="https://www.hotstar.com/1540068325" target="_blank" class="channel-card">
+        <div class="thumb-holder">
+          <img src="https://dvdh7g0f0hwck.cloudfront.net/assets/images/channel/StarSports2Kannada_Thumbnail_1512b00f-7129-4159-b327-bc49e67f67ed.png" alt="Star Sports 2 Kannada" loading="lazy">
+        </div>
+        <div class="channel-info">
+          <span class="channel-name">Star Sports 2 Kannada</span>
+          <span class="channel-status">&#9679; Live</span>
+        </div>
+      </a>
+
+      <a href="https://www.hotstar.com/1540073624" target="_blank" class="channel-card">
+        <div class="thumb-holder">
+          <img src="https://dvdh7g0f0hwck.cloudfront.net/assets/images/channel/StarSportsKhel_Thumbnail_49964529-9746-4d58-85bd-b8fa82066681.png" alt="Star Sports Khel" loading="lazy">
+        </div>
+        <div class="channel-info">
+          <span class="channel-name">Star Sports Khel</span>
+          <span class="channel-status">&#9679; Live</span>
+        </div>
+      </a>
+
+      <a href="WILLOWSPORTS.html" class="channel-card">
+        <div class="thumb-holder">
+          <img src="https://d229kpbsb5jevy.cloudfront.net/tv/150/150/bnw/Willow%20Sports_TV_black.png" alt="Willow Sports" loading="lazy">
+        </div>
+        <div class="channel-info">
+          <span class="channel-name">WILLOW SPORTS</span>
+          <span class="channel-status">&#9679; Live</span>
+        </div>
+      </a>
+
+    </div>
+  </main>
+
+  <!-- Login Required Notice Modal (24 Hours Frequency) -->
+  <div class="modal-overlay" id="noticeModal">
+    <div class="modal-card">
+      <button class="close-btn" onclick="dismissModal()" title="Close">&times;</button>
+      
+      <div class="modal-icon-badge">
+        <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+
+      <h2>Login Required</h2>
+      <div class="no-sub-pill">&#10003; No Need Any Subscription</div>
+
+      <div class="modal-notice-box">
+        <p><span class="notice-highlight">Welcome to MaxMentor!</span> Yeh live streaming portal bilkul free hai aur kisi bhi user se koi subscription fee nahi li jaati.</p>
+        <p>Direct live sports stream dekhein bina kisi login account ya registration ke. Latest updates aur live links ke liye hamara official Telegram channel join karein.</p>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-continue" onclick="dismissModal()">
+          Continue Streaming
+        </button>
+        <a href="https://t.me/maxmentor" target="_blank" rel="noopener noreferrer" class="btn-tg-join" onclick="dismissModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.52 2.77-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+          </svg>
+          Join Telegram (@maxmentor)
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 MaxMentor Live. All streams are free. Telegram: <a href="https://t.me/maxmentor" target="_blank">@maxmentor</a></p>
+  </footer>
+
+  <script>
+    // 24-Hour Notice Popup Check
+    const NOTICE_STORAGE_KEY = 'maxmentor_notice_last_viewed';
+    const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+
+    function checkAndShowNotice() {
+      const lastShown = localStorage.getItem(NOTICE_STORAGE_KEY);
+      const currentTime = new Date().getTime();
+
+      // Check karein agar pehle kabhi nahi dikha ya 24 ghante ho chuke hain
+      if (!lastShown || (currentTime - parseInt(lastShown, 10)) > TWENTY_FOUR_HOURS) {
+        setTimeout(() => {
+          document.getElementById('noticeModal').classList.add('active');
+        }, 300);
+      }
+    }
+
+    function dismissModal() {
+      // 24 hours ke liye timestamp store karein
+      localStorage.setItem(NOTICE_STORAGE_KEY, new Date().getTime().toString());
+      document.getElementById('noticeModal').classList.remove('active');
+    }
+
+    // Page Load Setup
+    window.addEventListener('DOMContentLoaded', () => {
+      checkAndShowNotice();
+
+      // Real-time Instant Search Filter
+      const searchInput = document.getElementById('channelSearch');
+      const cards = document.querySelectorAll('.channel-card');
+
+      searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        cards.forEach(card => {
+          const name = card.querySelector('.channel-name').textContent.toLowerCase();
+          if (name.includes(query)) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
