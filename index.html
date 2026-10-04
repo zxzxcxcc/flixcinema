@@ -1,1 +1,1313 @@
-.............Service Closed............
+<!DOCTYPE html>
+<html lang="hi" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FlixCinema — Watch & Stream</title>
+    
+    <!-- External CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --app-bg: #090a0f;
+            --app-card: #13161f;
+            --app-card-elevated: #1a1e2b;
+            --app-accent: #e50914;
+            --app-accent-glow: rgba(229, 9, 20, 0.4);
+            --app-border: rgba(255, 255, 255, 0.08);
+            --app-subtext: #8e95a5;
+            --app-text: #f8fafc;
+            --app-glass: rgba(18, 21, 31, 0.75);
+            --safe-bottom: env(safe-area-inset-bottom, 16px);
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--app-bg);
+            color: var(--app-text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            padding-bottom: calc(75px + var(--safe-bottom));
+            user-select: none;
+        }
+
+        /* App Header */
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+            background: var(--app-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--app-border);
+            padding: 12px 18px;
+        }
+
+        .brand-title {
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ff1a24 0%, #ff5252 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .header-icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--app-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .header-icon-btn:hover, .header-icon-btn:active {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+        }
+
+        /* Search Pill Bar */
+        .search-container {
+            position: relative;
+        }
+        .search-container .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--app-subtext);
+            font-size: 1rem;
+            pointer-events: none;
+        }
+        .app-search-input {
+            width: 100%;
+            background: var(--app-card);
+            border: 1px solid var(--app-border);
+            border-radius: 14px;
+            padding: 12px 16px 12px 42px;
+            color: #fff;
+            font-size: 0.92rem;
+            font-weight: 500;
+            transition: all 0.25s ease;
+        }
+        .app-search-input:focus {
+            background: var(--app-card-elevated);
+            border-color: var(--app-accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.15);
+            color: #fff;
+        }
+        .app-search-input::placeholder {
+            color: var(--app-subtext);
+            font-weight: 400;
+        }
+
+        /* Filter Chips Bar */
+        .filter-chip-container {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding-bottom: 2px;
+        }
+        .filter-chip-container::-webkit-scrollbar {
+            display: none;
+        }
+        .filter-chip {
+            padding: 7px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: var(--app-card);
+            border: 1px solid var(--app-border);
+            color: var(--app-subtext);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .filter-chip.active {
+            background: var(--app-accent);
+            border-color: var(--app-accent);
+            color: #fff;
+            box-shadow: 0 4px 12px var(--app-accent-glow);
+        }
+
+        /* App Section Titles */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .section-heading {
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-heading i {
+            color: var(--app-accent);
+            font-size: 1.15rem;
+        }
+
+        /* Promo / Featured Grid */
+        .promo-card {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(145deg, #181d29, #10131c);
+            border: 1px solid var(--app-border);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            text-decoration: none;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .promo-card:active {
+            transform: scale(0.97);
+        }
+        .promo-logo {
+            max-height: 48px;
+            max-width: 85%;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
+        }
+
+        /* Hotstar Banner */
+        .hotstar-promo-banner {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+            display: block;
+            background: #0f172a;
+            transition: transform 0.2s ease;
+        }
+        .hotstar-promo-banner:active {
+            transform: scale(0.985);
+        }
+        .hotstar-promo-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Live TV Rail */
+        .live-tv-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            scrollbar-width: none;
+            padding: 4px 2px 8px 2px;
+        }
+        .live-tv-container::-webkit-scrollbar {
+            display: none;
+        }
+        .live-tv-card {
+            flex: 0 0 110px;
+            width: 110px;
+            background: var(--app-card);
+            border: 1px solid var(--app-border);
+            border-radius: 14px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        .live-tv-card:active {
+            transform: scale(0.95);
+            border-color: var(--app-accent);
+        }
+        .live-tv-logo {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin: 0 auto 6px auto;
+            display: block;
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5));
+        }
+        .live-tv-badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 0.58rem;
+            font-weight: 700;
+            padding: 1px 5px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        /* App Media Grid */
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        @media (min-width: 576px) {
+            .media-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+            }
+        }
+        @media (min-width: 768px) {
+            .media-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 18px;
+            }
+        }
+        @media (min-width: 992px) {
+            .media-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 20px;
+            }
+        }
+
+        /* Native App-Style Movie Card */
+        .media-card {
+            background: var(--app-card);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--app-border);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+        }
+        .media-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .media-card:active {
+            transform: scale(0.98);
+        }
+
+        .poster-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 142%;
+            background: #11141c;
+            overflow: hidden;
+        }
+        .media-poster {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .media-card:hover .media-poster {
+            transform: scale(1.03);
+        }
+
+        .badge-type {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            font-size: 0.65rem;
+            font-weight: 700;
+            border-radius: 6px;
+            padding: 3px 7px;
+            text-transform: uppercase;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .badge-quality {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--app-accent);
+            font-size: 0.65rem;
+            font-weight: 700;
+            border-radius: 6px;
+            padding: 3px 7px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        }
+
+        .media-info {
+            padding: 10px 10px 12px 10px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+        .media-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+        }
+        .media-meta {
+            font-size: 0.72rem;
+            color: var(--app-subtext);
+            margin-bottom: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* App Action Buttons */
+        .btn-app-primary {
+            background: linear-gradient(135deg, #e50914, #c20811);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 7px 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: opacity 0.2s;
+        }
+        .btn-app-primary:active {
+            opacity: 0.8;
+            color: #fff;
+        }
+
+        .btn-app-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--app-border);
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .btn-app-icon:hover, .btn-app-icon:active {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+        }
+
+        /* Shared Card Glow Pulse */
+        @keyframes permanentGlow {
+            0%, 100% {
+                border-color: rgba(229, 9, 20, 0.4);
+                box-shadow: 0 0 12px rgba(229, 9, 20, 0.3);
+            }
+            50% {
+                border-color: #e50914;
+                box-shadow: 0 0 24px rgba(229, 9, 20, 0.8), inset 0 0 10px rgba(229, 9, 20, 0.3);
+            }
+        }
+        .highlight-pulse {
+            animation: permanentGlow 1.6s ease-in-out infinite !important;
+            border-width: 2px !important;
+            z-index: 5;
+        }
+
+        /* Bottom App Navigation Dock */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: calc(62px + var(--safe-bottom));
+            background: var(--app-glass);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-top: 1px solid var(--app-border);
+            display: flex;
+            align-items: flex-start;
+            padding-top: 8px;
+            z-index: 1020;
+        }
+        .nav-tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--app-subtext);
+            text-decoration: none;
+            font-size: 0.65rem;
+            font-weight: 600;
+            gap: 3px;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+        .nav-tab-item i {
+            font-size: 1.18rem;
+        }
+        .nav-tab-item.active {
+            color: var(--app-accent);
+        }
+
+        /* Modal App-Like Overrides */
+        .modal-content {
+            background-color: var(--app-card);
+            border: 1px solid var(--app-border);
+            border-radius: 22px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+        .modal-header {
+            border-bottom: 1px solid var(--app-border);
+            padding: 16px 20px;
+        }
+        .ep-card {
+            background: var(--app-card-elevated);
+            border: 1px solid var(--app-border);
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* PIN Screen App Lock */
+        #pinLockOverlay {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, #161a29 0%, #08090f 100%);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .pin-card {
+            background: rgba(22, 26, 38, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--app-border);
+            border-radius: 24px;
+            padding: 32px 24px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+        }
+        .pin-input {
+            letter-spacing: 14px;
+            font-size: 1.9rem;
+            text-align: center;
+            font-weight: 800;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border-radius: 14px;
+            padding: 10px 12px;
+            margin: 18px 0;
+        }
+        .pin-input:focus {
+            background: rgba(0, 0, 0, 0.6);
+            border-color: var(--app-accent);
+            box-shadow: 0 0 15px var(--app-accent-glow);
+            color: #fff;
+        }
+    </style>
+
+    <script>
+    (function(bsb){
+    var d = document,
+        s = d.createElement('script'),
+        l = d.currentScript || d.scripts[d.scripts.length - 1];
+    s.settings = bsb || {};
+    s.src = "\/\/peacefulbicycle.com\/b\/X.VPsudbG\/lZ0RYYWFcj\/YeomY9muDZIUNlLkNPrT\/cJ0FNJTCcoy\/MDjrUQtJN\/zkQM1HNbztI\/ycO\/QD";
+    s.async = true;
+    s.referrerPolicy = 'no-referrer-when-downgrade';
+    l.parentNode.insertBefore(s, l);
+    })({})
+    </script>
+</head>
+<body>
+
+    <!-- 6-Digit PIN Screen Overlay -->
+    <div id="pinLockOverlay">
+        <div class="pin-card">
+            <div class="mb-3">
+                <span class="d-inline-flex p-3 rounded-circle" style="background: rgba(229, 9, 20, 0.12);">
+                    <i class="bi bi-shield-lock-fill text-danger fs-1"></i>
+                </span>
+            </div>
+            <h4 class="fw-bold mb-1">FlixCinema Security</h4>
+            <p class="text-secondary small mb-3">Kripya aage badhne ke liye 6-Digit PIN enter karein</p>
+            
+            <form id="pinForm" onsubmit="verifyPin(event)">
+                <input type="password" id="pinCode" class="form-control pin-input" maxlength="6" pattern="\d{6}" placeholder="******" required autofocus inputmode="numeric">
+                
+                <div id="pinError" class="alert alert-danger py-2 small d-none mb-3"></div>
+                
+                <button type="submit" class="btn btn-app-primary w-100 py-2 fw-bold mb-3" id="unlockBtn">
+                    <i class="bi bi-unlock me-1"></i> Unlock App
+                </button>
+            </form>
+
+            <div class="pt-3 border-top border-secondary border-opacity-25">
+                <p class="text-secondary small mb-2"><i class="bi bi-key-fill text-warning me-1"></i> Don't have a PIN?</p>
+                <a href="https://whatsapp.com" target="_blank" class="btn btn-success btn-sm w-100 fw-bold py-2 rounded-3">
+                    <i class="bi bi-whatsapp me-1"></i> Get PIN on WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Top Navigation Bar -->
+    <header class="app-header d-flex align-items-center justify-content-between">
+        <a class="brand-title" href="index.html">
+            <i class="bi bi-play-circle-fill"></i> FlixCinema
+        </a>
+        <div class="d-flex align-items-center gap-2">
+            <a href="https://whatsapp.com" target="_blank" class="header-icon-btn" title="Support">
+                <i class="bi bi-whatsapp text-success"></i>
+            </a>
+            <button class="header-icon-btn" onclick="window.location.reload();" title="Refresh">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container px-3 pt-3" style="max-width: 1200px;">
+        
+        <!-- Live TV Horizontal Rail -->
+        <section id="liveTvSection" class="mb-4 d-none">
+            <div class="section-header">
+                <div class="section-heading text-info">
+                    <i class="bi bi-broadcast"></i> Live Channels
+                </div>
+                <span class="badge rounded-pill text-bg-danger" style="font-size: 0.65rem;">ON AIR</span>
+            </div>
+            <div class="live-tv-container" id="liveTvContainer"></div>
+        </section>
+
+        <!-- Hub Highlights (Marvel & Bigg Boss) -->
+        <section class="row g-2 mb-3">
+            <div class="col-6">
+                <a href="marvel.html" class="promo-card h-100">
+                    <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/63/Marvel_Studios_logo.svg/3840px-Marvel_Studios_logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail" alt="Marvel Studios" class="promo-logo">
+                </a>
+            </div>
+            <div class="col-6">
+                <a href="biggboss20.html" class="promo-card h-100">
+                    <img src="https://mir-s3-cdn-cf.behance.net/projects/404/83533e226955217.Y3JvcCw2MTMsNDc5LDM5MywxNTM.png" alt="Bigg Boss Season 20" class="promo-logo">
+                </a>
+            </div>
+        </section>
+
+        <!-- Hotstar Live Sports Promo Banner -->
+        <section class="mb-3">
+            <a href="hotstar.html" class="hotstar-promo-banner">
+                <img src="https://i.ibb.co/Z18k8GFq/hhst.png" alt="Hotstar Live Sports Channels" class="hotstar-promo-img">
+            </a>
+        </section>
+
+        <!-- App Search & Filter Bar -->
+        <section class="mb-4">
+            <div class="search-container mb-2">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" id="liveSearch" class="app-search-input" placeholder="Search movies, shows, series..." oninput="applyFilters()">
+            </div>
+
+            <!-- Category Chips -->
+            <div class="filter-chip-container" id="chipsWrapper">
+                <button type="button" class="filter-chip active" data-cat="ALL" onclick="selectChipCategory('ALL', this)">All</button>
+                <button type="button" class="filter-chip" data-cat="LIVETV" onclick="selectChipCategory('LIVETV', this)">Live TV</button>
+                <button type="button" class="filter-chip" data-cat="MOVIE" onclick="selectChipCategory('MOVIE', this)">Movies</button>
+                <button type="button" class="filter-chip" data-cat="SERIES" onclick="selectChipCategory('SERIES', this)">Web Series</button>
+            </div>
+            <!-- Hidden fallback for script compatibility -->
+            <select id="catFilter" class="d-none" onchange="applyFilters()">
+                <option value="ALL">All Categories</option>
+                <option value="LIVETV">Live TV Only</option>
+                <option value="MOVIE">Movies Only</option>
+                <option value="SERIES">Web Series Only</option>
+            </select>
+        </section>
+
+        <!-- Mixed Media Feed -->
+        <section id="mainFeedWrapper">
+            <div class="section-header">
+                <div class="section-heading" id="feedTitle">
+                    <i class="bi bi-fire"></i> Trending Now
+                </div>
+            </div>
+            <div class="media-grid" id="mainGrid"></div>
+        </section>
+
+        <!-- Live TV Dedicated Filter View -->
+        <section id="liveTvGridWrapper" class="d-none">
+            <div class="section-header">
+                <div class="section-heading text-info">
+                    <i class="bi bi-broadcast"></i> All Live TV Channels
+                </div>
+            </div>
+            <div class="media-grid" id="liveTvGrid"></div>
+        </section>
+
+        <!-- Infinite Scroll Sentinel -->
+        <div id="scrollSentinel" class="text-center py-4">
+            <div class="spinner-border spinner-border-sm text-danger d-none" id="scrollSpinner" role="status"></div>
+            <div class="small text-secondary d-none" id="endMessage">✓ You're all caught up</div>
+        </div>
+
+    </main>
+
+    <!-- Bottom App Navigation Bar -->
+    <nav class="bottom-nav">
+        <div class="nav-tab-item active" id="tabHome" onclick="selectBottomTab('ALL')">
+            <i class="bi bi-house-door-fill"></i>
+            <span>Home</span>
+        </div>
+        <div class="nav-tab-item" id="tabLiveTv" onclick="selectBottomTab('LIVETV')">
+            <i class="bi bi-broadcast"></i>
+            <span>Live TV</span>
+        </div>
+        <div class="nav-tab-item" id="tabMovies" onclick="selectBottomTab('MOVIE')">
+            <i class="bi bi-film"></i>
+            <span>Movies</span>
+        </div>
+        <div class="nav-tab-item" id="tabSeries" onclick="selectBottomTab('SERIES')">
+            <i class="bi bi-collection-play"></i>
+            <span>Series</span>
+        </div>
+    </nav>
+
+    <!-- Web Series Episodes Modal -->
+    <div class="modal fade" id="seriesModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title fw-bold text-truncate" id="seriesModalTitle">Series Title</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <ul class="nav nav-pills gap-2 mb-3" id="seasonTabs"></ul>
+                    <div id="episodesList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const FULL_SAVE_M3U_URL = "https://toolsmax.site/flixcinema/admin/save_m3u.php";
+        const FULL_PIN_URL = "https://toolsmax.site/flixcinema/admin/pin.php";
+
+        let rawData = { liveTv: [], movies: [], series: [] };
+        let mixedFeed = [];
+        let filteredFeed = [];
+        let loadedCount = 0;
+        const chunkSize = 20;
+
+        // Share Link Parameter Reader
+        const urlParams = new URLSearchParams(window.location.search);
+        const sharedItemId = urlParams.get('item');
+
+        // Chip / Bottom Tab Category Sync
+        function selectChipCategory(cat, chipElement) {
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            if (chipElement) chipElement.classList.add('active');
+            
+            const selectEl = document.getElementById('catFilter');
+            selectEl.value = cat;
+
+            // Sync Bottom Tab
+            document.querySelectorAll('.nav-tab-item').forEach(t => t.classList.remove('active'));
+            if (cat === 'ALL') document.getElementById('tabHome').classList.add('active');
+            else if (cat === 'LIVETV') document.getElementById('tabLiveTv').classList.add('active');
+            else if (cat === 'MOVIE') document.getElementById('tabMovies').classList.add('active');
+            else if (cat === 'SERIES') document.getElementById('tabSeries').classList.add('active');
+
+            applyFilters();
+        }
+
+        function selectBottomTab(cat) {
+            const targetChip = document.querySelector(`.filter-chip[data-cat="${cat}"]`);
+            selectChipCategory(cat, targetChip);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Link Type Checker Helpers
+        function isDirectHtmlVideo(url) {
+            if (!url) return false;
+            const u = url.toLowerCase().split('?')[0].trim();
+            return u.endsWith('.mp4') || u.endsWith('.mkv');
+        }
+
+        function isStreamingHlsOrT(url) {
+            if (!url) return false;
+            const u = url.toLowerCase().split('?')[0].trim();
+            return u.endsWith('.m3u8') || u.endsWith('.t') || u.includes('.m3u8') || u.includes('.t?');
+        }
+
+        // Share Feature Handler
+        function shareItem(e, id, title) {
+            e.stopPropagation();
+            const shareUrl = `${window.location.origin}${window.location.pathname}?item=${encodeURIComponent(id)}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: title,
+                    text: `FlixCinema par "${title}" dekhein!`,
+                    url: shareUrl
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    alert(`"${title}" ka share link copy ho gaya!`);
+                }).catch(() => {
+                    prompt("Link copy karein:", shareUrl);
+                });
+            }
+        }
+
+        // PIN Verification with 24 Hours Expiry Cache
+        const PIN_EXPIRY_MS = 24 * 60 * 60 * 1000;
+
+        function isPinValid() {
+            const unlockTime = localStorage.getItem('fc_unlocked_time');
+            if (!unlockTime) return false;
+            const elapsed = Date.now() - parseInt(unlockTime, 10);
+            return elapsed < PIN_EXPIRY_MS;
+        }
+
+        async function verifyPin(e) {
+            e.preventDefault();
+            const pin = document.getElementById('pinCode').value;
+            const btn = document.getElementById('unlockBtn');
+            const err = document.getElementById('pinError');
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Verifying...';
+            err.classList.add('d-none');
+
+            let success = false;
+            let resMessage = '';
+
+            try {
+                const res = await fetch(FULL_PIN_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pin: pin })
+                });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    success = true;
+                } else {
+                    resMessage = result.message || 'Galat PIN!';
+                }
+            } catch(e) {
+                console.error("PIN Verification direct error, retrying fallback:", e);
+                try {
+                    const fallbackRes = await fetch('admin/pin.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ pin: pin })
+                    });
+                    const fbResult = await fallbackRes.json();
+                    if (fbResult.status === 'success') {
+                        success = true;
+                    } else {
+                        resMessage = fbResult.message || 'Galat PIN!';
+                    }
+                } catch(err2) {
+                    resMessage = 'Network issue. Server response nahi de raha.';
+                }
+            }
+
+            if (success) {
+                localStorage.setItem('fc_unlocked_time', Date.now().toString());
+                document.getElementById('pinLockOverlay').style.display = 'none';
+                await loadContent();
+            } else {
+                err.innerText = resMessage || 'Connection error. Please try again.';
+                err.classList.remove('d-none');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-unlock me-1"></i> Unlock App';
+        }
+
+        // Check Unlock Status on Initial Load
+        if (isPinValid()) {
+            document.getElementById('pinLockOverlay').style.display = 'none';
+            loadContent();
+        } else {
+            localStorage.removeItem('fc_unlocked_time');
+        }
+
+        // URL Converters
+        function getPlayableUrl(link) {
+            if (!link) return '';
+            let clean = link.trim();
+            if (clean.includes('/u/')) return clean.replace('/u/', '/api/file/');
+            if (clean.includes('/file/')) return clean.replace('/file/', '/api/file/');
+            return clean;
+        }
+
+        function getDownloadableUrl(link) {
+            if (!link) return '';
+            let clean = link.trim();
+            if (clean.includes('/api/file/')) return clean.replace('/api/file/', '/u/');
+            return clean;
+        }
+
+        // Live TV Click Controller
+        function triggerLiveTv(title, streamLink) {
+            const finalLink = getPlayableUrl(streamLink);
+            const isAndroid = /Android/i.test(navigator.userAgent);
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+            if (isAndroid) {
+                const cleanUrl = finalLink.replace(/^https?:\/\//i, '');
+                const scheme = finalLink.startsWith('https') ? 'https' : 'http';
+                const intentUrl = `intent://${cleanUrl}#Intent;scheme=${scheme};type=video/*;action=android.intent.action.VIEW;category=android.intent.category.DEFAULT;category=android.intent.category.BROWSABLE;S.title=${encodeURIComponent(title)};end`;
+                
+                const link = document.createElement('a');
+                link.href = intentUrl;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else if (isIOS) {
+                window.location.href = `vlc://${finalLink}`;
+                setTimeout(() => { 
+                    window.location.href = finalLink; 
+                }, 1000);
+            } else {
+                const m3uContent = `#EXTM3U\n#EXTINF:-1,${title}\n${finalLink}`;
+                const blob = new Blob([m3uContent], { type: 'audio/x-mpegurl' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${title.replace(/[^a-zA-Z0-9]/g, '_')}.m3u`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // Movies & Web Series Play Controller
+        function triggerPlayer(title, streamLink) {
+            const finalLink = getPlayableUrl(streamLink);
+
+            if (isDirectHtmlVideo(finalLink) || isStreamingHlsOrT(finalLink)) {
+                window.location.href = `https://zxzxcxcc.github.io/flixcinema/play.html?title=${encodeURIComponent(title)}&url=${encodeURIComponent(finalLink)}`;
+                return;
+            }
+
+            const isAndroid = /Android/i.test(navigator.userAgent);
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+            if (isAndroid) {
+                const cleanUrl = finalLink.replace(/^https?:\/\//i, '');
+                const scheme = finalLink.startsWith('https') ? 'https' : 'http';
+                const intentUrl = `intent://${cleanUrl}#Intent;scheme=${scheme};type=video/*;action=android.intent.action.VIEW;category=android.intent.category.DEFAULT;category=android.intent.category.BROWSABLE;S.title=${encodeURIComponent(title)};end`;
+                
+                const link = document.createElement('a');
+                link.href = intentUrl;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else if (isIOS) {
+                window.location.href = `vlc://${finalLink}`;
+                setTimeout(() => { 
+                    window.location.href = finalLink; 
+                }, 1000);
+            } else {
+                const m3uContent = `#EXTM3U\n#EXTINF:-1,${title}\n${finalLink}`;
+                const blob = new Blob([m3uContent], { type: 'audio/x-mpegurl' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${title.replace(/[^a-zA-Z0-9]/g, '_')}.m3u`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // Load Content (Proxy + Direct fallback)
+        async function loadContent() {
+            const ts = Date.now();
+            const sources = [
+                FULL_SAVE_M3U_URL + `?_t=${ts}`,
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(FULL_SAVE_M3U_URL + '?_t=' + ts)}`,
+                `https://corsproxy.io/?${encodeURIComponent(FULL_SAVE_M3U_URL + '?_t=' + ts)}`
+            ];
+
+            let dataLoaded = false;
+            for (const url of sources) {
+                try {
+                    const res = await fetch(url);
+                    if (res.ok) {
+                        const json = await res.json();
+                        if (json && json.status === 'success' && json.data) {
+                            rawData = json.data;
+                            renderLiveTvCarousel(rawData.liveTv || []);
+                            prepareInterleavedFeed();
+                            resetAndRender();
+                            dataLoaded = true;
+                            break;
+                        }
+                    }
+                } catch (e) {
+                    // Try next source
+                }
+            }
+
+            if (!dataLoaded) {
+                document.getElementById('mainGrid').innerHTML = '<div class="col-12 text-center text-danger py-5">Server se content load nahi ho paya. Refresh karein.</div>';
+            }
+        }
+
+        // Live TV Horizontal Bar
+        function renderLiveTvCarousel(tvList) {
+            const container = document.getElementById('liveTvContainer');
+            const section = document.getElementById('liveTvSection');
+            
+            const activeTvList = (tvList || []).filter(tv => tv.status === true);
+
+            if (!activeTvList || activeTvList.length === 0) {
+                section.classList.add('d-none');
+                return;
+            }
+
+            section.classList.remove('d-none');
+            container.innerHTML = activeTvList.map(tv => `
+                <div class="live-tv-card" onclick="triggerLiveTv('${tv.title}', '${tv.link}')">
+                    <span class="live-tv-badge">LIVE</span>
+                    <img src="${tv.poster}" class="live-tv-logo" loading="lazy" onerror="this.src='https://via.placeholder.com/60?text=TV'">
+                    <div class="small fw-semibold text-truncate text-light">${tv.title}</div>
+                </div>
+            `).join('');
+        }
+
+        // Proper Top-First Interleaved Feed
+        function prepareInterleavedFeed() {
+            const movies = (rawData.movies || []).map(m => ({ ...m, feedType: 'MOVIE' }));
+            const seriesList = (rawData.series || []);
+
+            const originalTitles = new Set([
+                "brown", "the pyramid scheme", "teach you a lesson", "gyeongseong creature", 
+                "raakh", "viral hit", "gullak", "gram chikitsalay", "notes from the last row", 
+                "tribhuvan mishra ca topper", "lingam", "super subbu", "ab hoga hisaab", 
+                "pritam and pedro", "human vapor", "raktanchal", "adarsh baal vidyalaya", 
+                "muthassi", "operation safed sagar", "the apartment job", "mousetrap", "lanterns"
+            ]);
+
+            const newSeries = seriesList.filter(s => !originalTitles.has((s.title || '').toLowerCase().trim()));
+            const oldSeries = seriesList.filter(s => originalTitles.has((s.title || '').toLowerCase().trim())).reverse();
+
+            const series = [...newSeries, ...oldSeries].map(s => ({ ...s, feedType: 'SERIES' }));
+            
+            mixedFeed = [];
+            const maxLen = Math.max(movies.length, series.length);
+            for (let i = 0; i < maxLen; i++) {
+                if (i < movies.length) mixedFeed.push(movies[i]);
+                if (i < series.length) mixedFeed.push(series[i]);
+            }
+
+            if (sharedItemId) {
+                const targetIndex = mixedFeed.findIndex(item => String(item.id) === String(sharedItemId));
+                if (targetIndex > -1) {
+                    const [sharedTarget] = mixedFeed.splice(targetIndex, 1);
+                    mixedFeed.unshift(sharedTarget);
+                }
+            }
+
+            filteredFeed = [...mixedFeed];
+        }
+
+        // Search & Category Handler
+        function applyFilters() {
+            const q = document.getElementById('liveSearch').value.toLowerCase().trim();
+            const cat = document.getElementById('catFilter').value;
+
+            const mainFeedWrapper = document.getElementById('mainFeedWrapper');
+            const liveTvGridWrapper = document.getElementById('liveTvGridWrapper');
+
+            if (cat === 'LIVETV') {
+                mainFeedWrapper.classList.add('d-none');
+                liveTvGridWrapper.classList.remove('d-none');
+                renderLiveTvGrid(q);
+                return;
+            } else {
+                mainFeedWrapper.classList.remove('d-none');
+                liveTvGridWrapper.classList.add('d-none');
+            }
+
+            filteredFeed = mixedFeed.filter(item => {
+                const matchQuery = !q || item.title.toLowerCase().includes(q) || (item.genre && item.genre.toLowerCase().includes(q));
+                const matchCat = (cat === 'ALL') || (item.feedType === cat);
+                return matchQuery && matchCat;
+            });
+
+            resetAndRender();
+        }
+
+        // Live TV Grid
+        function renderLiveTvGrid(query) {
+            const grid = document.getElementById('liveTvGrid');
+            const list = (rawData.liveTv || [])
+                .filter(tv => tv.status === true)
+                .filter(tv => !query || tv.title.toLowerCase().includes(query));
+            
+            if (list.length === 0) {
+                grid.innerHTML = '<div class="col-12 text-center text-secondary py-5">No active live channels found.</div>';
+                return;
+            }
+
+            grid.innerHTML = list.map(tv => `
+                <div class="media-card p-3 text-center cursor-pointer" onclick="triggerLiveTv('${tv.title}', '${tv.link}')">
+                    <img src="${tv.poster}" class="mx-auto mb-2" style="width:65px; height:65px; object-fit:contain;" loading="lazy" onerror="this.src='https://via.placeholder.com/70?text=TV'">
+                    <div class="fw-bold text-truncate text-light">${tv.title}</div>
+                    <span class="badge rounded-pill text-bg-info mt-2" style="font-size: 0.65rem;">${tv.quality || 'Auto'}</span>
+                </div>
+            `).join('');
+        }
+
+        function resetAndRender() {
+            loadedCount = 0;
+            document.getElementById('mainGrid').innerHTML = '';
+            document.getElementById('endMessage').classList.add('d-none');
+            loadNextChunk();
+        }
+
+        function loadNextChunk() {
+            const grid = document.getElementById('mainGrid');
+            const total = filteredFeed.length;
+
+            if (total === 0) {
+                grid.innerHTML = '<div class="col-12 text-center text-secondary py-5"><i class="bi bi-search fs-1 d-block mb-2"></i>No matching movies or series found.</div>';
+                return;
+            }
+
+            if (loadedCount >= total) {
+                document.getElementById('endMessage').classList.remove('d-none');
+                return;
+            }
+
+            const chunk = filteredFeed.slice(loadedCount, loadedCount + chunkSize);
+            let html = '';
+
+            chunk.forEach(item => {
+                const isMovie = item.feedType === 'MOVIE';
+                const typeBadge = isMovie ? 'Movie' : 'Series';
+                const qualityBadge = item.quality ? `<span class="badge-quality">${item.quality}</span>` : '';
+                const poster = item.poster || 'https://via.placeholder.com/300x450?text=FlixCinema';
+                const isShared = (sharedItemId && String(item.id) === String(sharedItemId));
+                const safeTitle = (item.title || '').replace(/'/g, "\\'");
+
+                const metaText = isMovie 
+                    ? `${item.year || '2026'} • ${item.genre || 'Entertainment'}` 
+                    : `${item.genre || 'Entertainment'}`;
+
+                let actionBtn = '';
+                if (isMovie) {
+                    const dLink = getDownloadableUrl(item.link);
+                    const hideDownload = isStreamingHlsOrT(item.link);
+
+                    if (hideDownload) {
+                        actionBtn = `
+                            <div class="d-flex gap-1 mt-auto pt-2">
+                                <button class="btn-app-primary flex-grow-1" onclick="triggerPlayer('${item.title}', '${item.link}')">
+                                    <i class="bi bi-play-fill fs-6"></i> Play
+                                </button>
+                                <button class="btn-app-icon" onclick="shareItem(event, '${item.id}', '${safeTitle}')" title="Share">
+                                    <i class="bi bi-share-fill"></i>
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        actionBtn = `
+                            <div class="d-flex gap-1 mt-auto pt-2">
+                                <button class="btn-app-primary flex-grow-1" onclick="triggerPlayer('${item.title}', '${item.link}')">
+                                    <i class="bi bi-play-fill fs-6"></i> Play
+                                </button>
+                                <a href="${dLink}" target="_blank" class="btn-app-icon" title="Download">
+                                    <i class="bi bi-download"></i>
+                                </a>
+                                <button class="btn-app-icon" onclick="shareItem(event, '${item.id}', '${safeTitle}')" title="Share">
+                                    <i class="bi bi-share-fill"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                } else {
+                    actionBtn = `
+                        <div class="d-flex gap-1 mt-auto pt-2">
+                            <button class="btn-app-primary flex-grow-1" onclick="openSeriesModal('${item.id}')">
+                                <i class="bi bi-collection-play me-1"></i> Episodes
+                            </button>
+                            <button class="btn-app-icon" onclick="shareItem(event, '${item.id}', '${safeTitle}')" title="Share">
+                                <i class="bi bi-share-fill"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+
+                html += `
+                    <div class="media-card ${isShared ? 'highlight-pulse' : ''}" id="card_${item.id}">
+                        <div class="poster-wrapper">
+                            <img src="${poster}" class="media-poster" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=FlixCinema'">
+                            <span class="badge-type">${typeBadge}</span>
+                            ${qualityBadge}
+                        </div>
+                        <div class="media-info">
+                            <div>
+                                <div class="media-title" title="${item.title}">${item.title}</div>
+                                <div class="media-meta">${metaText}</div>
+                            </div>
+                            ${actionBtn}
+                        </div>
+                    </div>
+                `;
+            });
+
+            grid.insertAdjacentHTML('beforeend', html);
+            loadedCount += chunk.length;
+
+            if (sharedItemId && document.getElementById(`card_${sharedItemId}`)) {
+                setTimeout(() => {
+                    const el = document.getElementById(`card_${sharedItemId}`);
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            }
+
+            if (loadedCount >= total) {
+                document.getElementById('endMessage').classList.remove('d-none');
+            }
+        }
+
+        // Infinite Scroll Observer
+        const sentinel = document.getElementById('scrollSentinel');
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && loadedCount < filteredFeed.length) {
+                loadNextChunk();
+            }
+        }, { rootMargin: '200px' });
+        observer.observe(sentinel);
+
+        // Web Series Modal Logic
+        let currentSeries = null;
+        function openSeriesModal(seriesId) {
+            currentSeries = (rawData.series || []).find(s => s.id === seriesId);
+            if (!currentSeries) return;
+
+            document.getElementById('seriesModalTitle').innerText = currentSeries.title;
+            const tabs = document.getElementById('seasonTabs');
+            tabs.innerHTML = '';
+
+            (currentSeries.seasons || []).forEach((season, idx) => {
+                const sNum = idx + 1;
+                tabs.innerHTML += `
+                    <li class="nav-item">
+                        <button class="btn btn-sm ${idx === 0 ? 'btn-danger' : 'btn-outline-secondary'} rounded-pill px-3" onclick="renderSeasonEpisodes(${idx}, this)">
+                            Season ${sNum}
+                        </button>
+                    </li>
+                `;
+            });
+
+            renderSeasonEpisodes(0);
+            const modal = new bootstrap.Modal(document.getElementById('seriesModal'));
+            modal.show();
+        }
+
+        function renderSeasonEpisodes(seasonIdx, btnEl) {
+            if (btnEl) {
+                document.querySelectorAll('#seasonTabs button').forEach(el => {
+                    el.className = 'btn btn-sm btn-outline-secondary rounded-pill px-3';
+                });
+                btnEl.className = 'btn btn-sm btn-danger rounded-pill px-3';
+            }
+
+            const epList = document.getElementById('episodesList');
+            const episodes = currentSeries.seasons[seasonIdx]?.episodes || [];
+            
+            if (episodes.length === 0) {
+                epList.innerHTML = '<div class="text-secondary py-3 text-center">No episodes available in this season.</div>';
+                return;
+            }
+
+            epList.innerHTML = episodes.map((ep, idx) => {
+                const epTitle = `${currentSeries.title} S${seasonIdx + 1} E${idx + 1} - ${ep.title}`;
+                const dLink = getDownloadableUrl(ep.link);
+                const hideDownload = isStreamingHlsOrT(ep.link);
+                
+                const cleanEpLink = (ep.link || '').toLowerCase().split('?')[0].trim();
+                const epTitleText = (ep.title || '').toLowerCase();
+                const seriesTitleText = (currentSeries.title || '').toLowerCase();
+                
+                const isPackText = (t) => t.includes('complete pack') || t.includes('full season pack') || t.includes('zip pack') || t.includes('season pack');
+                const isArchive = cleanEpLink.endsWith('.zip') || cleanEpLink.endsWith('.rar') || isPackText(epTitleText) || isPackText(seriesTitleText) || cleanEpLink.includes('.zip') || cleanEpLink.includes('.rar');
+
+                let btnHtml = '';
+                if (isArchive) {
+                    btnHtml = `
+                        <a href="${dLink}" target="_blank" class="btn btn-sm btn-secondary rounded-pill px-3 text-decoration-none">
+                            <i class="bi bi-download me-1"></i> Download
+                        </a>
+                    `;
+                } else if (hideDownload) {
+                    btnHtml = `
+                        <button class="btn btn-sm btn-danger rounded-pill px-3" onclick="triggerPlayer('${epTitle}', '${ep.link}')">
+                            <i class="bi bi-play-fill"></i> Play
+                        </button>
+                    `;
+                } else {
+                    btnHtml = `
+                        <button class="btn btn-sm btn-danger rounded-pill px-3" onclick="triggerPlayer('${epTitle}', '${ep.link}')">
+                            <i class="bi bi-play-fill"></i> Play
+                        </button>
+                        <a href="${dLink}" target="_blank" class="btn btn-sm btn-outline-light rounded-pill px-3 text-decoration-none">
+                            <i class="bi bi-download"></i>
+                        </a>
+                    `;
+                }
+
+                return `
+                    <div class="ep-card">
+                        <div class="fw-semibold text-truncate me-2" style="max-width: 60%;">
+                            <span class="text-danger me-1">E${idx + 1}</span> ${ep.title}
+                        </div>
+                        <div class="d-flex gap-2">
+                            ${btnHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
